@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // function to solve expression
-String solveExpression(TextEditingController controller, String expression) {
+String solveExpression(TextEditingController controller, String expression, List<String> history) {
   final Parser p = Parser();
+  List<String> operators = ['/', '*', '-', '+', '^'];
 
   if(expression.trim().isEmpty) {
     return controller.text = '';
@@ -14,10 +16,52 @@ String solveExpression(TextEditingController controller, String expression) {
     double result = parsedExpression.evaluate(EvaluationType.REAL, ContextModel());
 
     // format result as a whole number if it's decimal is 0, otherwise show 2 decimals
-    return controller.text = result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
+    String resultStr = result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
+    // save expression to history
+    // check if this expression contains math operators
+    for(var operator in operators) {
+      if(expression.contains(operator)) {
+        addToHistory(history, '$expression = $resultStr');
+      }
+    }
+
+    return controller.text = resultStr;
   } catch (e) {
     return controller.text = 'Error';
   }
+}
+
+// save expression to history variable
+void addToHistory(List<String> history, String expression) {
+  history.add(expression);
+  saveData(history);
+}
+
+// delete one item in history
+void deleteItemInHistory(List<String> history, int index) {
+  history.removeAt(index);
+  saveData(history);
+}
+
+// clear all history
+void clearHistory(List<String> history) {
+  if(history.isNotEmpty) {
+    history.clear();
+    saveData(history);
+  }
+}
+
+// save data to shared_preferences
+Future<List<String>> saveData(List<String> history) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList('history', history);
+  return history;
+}
+
+// load data from shared_preferences
+Future<List<String>> loadData(String keyToLoad) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getStringList(keyToLoad) ?? [];
 }
 
 // clear expression field

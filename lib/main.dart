@@ -25,8 +25,15 @@ class MainApp extends StatelessWidget {
           ),
         ),
         textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(0xFFf6f5f4)
+          selectionColor: Color(0xFFf6f5f4),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Color(0xFFf6f5f4),
+          indicatorColor: Color(0xFFdeddda),
+          iconTheme: WidgetStateProperty.all(
+            IconThemeData(color: Color(0xFF2E3436))
+          )
+        )
       ),
       home: MainPage()
     );
