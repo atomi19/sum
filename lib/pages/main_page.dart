@@ -23,7 +23,10 @@ class _MainPageState extends State<MainPage> {
 
   // load history from shared_preferences
   Future<void> _loadHistory() async {
-    _history = await loadData('history');
+    final loadedHistory = await loadData('history');
+    setState(() {
+      _history = loadedHistory;
+    });
   }
 
   @override
