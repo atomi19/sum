@@ -14,11 +14,17 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0; // current tab index
   List<String> _history = [];
   final TextEditingController expressionController = TextEditingController();
+  final TextEditingController resultController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadHistory();
+
+    expressionController.addListener(() {
+      final expression = expressionController.text;
+      solveExpression(resultController, expressionController, expression, _history, false);
+    });
   }
 
   // load history from shared_preferences
@@ -32,7 +38,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> tabs = [
-      MainTab(history: _history, expressionController: expressionController),
+      MainTab(
+        history: _history,
+        resultController: resultController,
+        expressionController: expressionController,
+      ),
       HistoryTab(
         history: _history, 
         controller: expressionController, 

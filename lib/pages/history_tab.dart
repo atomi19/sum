@@ -40,121 +40,124 @@ class _HistoryTabState extends State<HistoryTab>{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // app bar
-        Container(
-          color: Color(0xFFfcfcfc),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'History',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context, 
-                    builder: (BuildContext context) => AlertDialog(
-                      backgroundColor: Color(0xFFf6f5f4),
-                      title: const Text('Clear history'),
-                      content: const Text('It will clear all your history!'),
-                      actions:<Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              clearHistory(widget.history);
-                            });
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    )
-                  );
-                },
-                child: const Icon(Icons.delete_outline, color: Colors.red,)
-              ),
-            ],
-          ),
-        ),
-        // history section
-        Expanded(
-          child: widget.history.isEmpty
-          ? const Center(child: Text('No history available', style: TextStyle(fontSize: 25)))
-          : ListView.builder(
-            itemCount: widget.history.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Color(0xFFdeddda), width: 1))
-                    ),
-                    child: ListTile(
-                      title: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(widget.history[index], style: TextStyle(color: Colors.black, fontSize: 20)),
-                      ),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+    return SafeArea(
+
+      child: Column(
+        children: [
+          // app bar
+          Container(
+            color: Color(0xFFfcfcfc),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'History',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context, 
+                      builder: (BuildContext context) => AlertDialog(
+                        backgroundColor: Color(0xFFf6f5f4),
+                        title: const Text('Clear history'),
+                        content: const Text('It will clear all your history!'),
+                        actions:<Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
                           ),
-                          builder: (BuildContext context) {
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                              child: Wrap(
-                                children: [
-                                  ListTile(
-                                    leading: const Icon(Icons.download),
-                                    title: const Text('Take expression'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      insertData(widget.history[index], 'expression');
-                                      widget.onExpressionSelected();
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.download),
-                                    title: const Text('Take result'),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      insertData(widget.history[index], 'result');
-                                      widget.onExpressionSelected();
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading: const Icon(Icons.delete_outline, color: Colors.red),
-                                    title: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        deleteItemInHistory(widget.history, index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        );
-                      },
-                    ),
-                  )
-                ]
-              );
-            }
-          )
-        ),
-      ],
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                clearHistory(widget.history);
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      )
+                    );
+                  },
+                  child: const Icon(Icons.delete_outline, color: Colors.red,)
+                ),
+              ],
+            ),
+          ),
+          // history section
+          Expanded(
+            child: widget.history.isEmpty
+            ? const Center(child: Text('No history available', style: TextStyle(fontSize: 25)))
+            : ListView.builder(
+              itemCount: widget.history.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Color(0xFFdeddda), width: 1))
+                      ),
+                      child: ListTile(
+                        title: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(widget.history[index], style: TextStyle(color: Colors.black, fontSize: 20)),
+                        ),
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+                            ),
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Wrap(
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.download),
+                                      title: const Text('Take expression'),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        insertData(widget.history[index], 'expression');
+                                        widget.onExpressionSelected();
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.download),
+                                      title: const Text('Take result'),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        insertData(widget.history[index], 'result');
+                                        widget.onExpressionSelected();
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.delete_outline, color: Colors.red),
+                                      title: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        setState(() {
+                                          deleteItemInHistory(widget.history, index);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          );
+                        },
+                      ),
+                    )
+                  ]
+                );
+              }
+            )
+          ),
+        ],
+      )
     );
   }
 }

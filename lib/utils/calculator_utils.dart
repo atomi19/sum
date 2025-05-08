@@ -3,12 +3,19 @@ import 'package:math_expressions/math_expressions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // function to solve expression
-String solveExpression(TextEditingController controller, String expression, List<String> history) {
+String solveExpression(
+  TextEditingController resultController, 
+  TextEditingController expressionController, 
+  String expression, 
+  List<String> history,
+  bool isAddingToHistory,
+  ) {
   final Parser p = Parser();
   List<String> operators = ['/', '*', '-', '+', '^'];
 
   if(expression.trim().isEmpty) {
-    return controller.text = '';
+    resultController.text = '';
+    expressionController.text = '';
   }
 
   try {
@@ -17,17 +24,23 @@ String solveExpression(TextEditingController controller, String expression, List
 
     // format result as a whole number if it's decimal is 0, otherwise show 2 decimals
     String resultStr = result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
+
     // save expression to history
     // check if this expression contains math operators
     for(var operator in operators) {
       if(expression.contains(operator)) {
-        addToHistory(history, '$expression = $resultStr');
+        if(isAddingToHistory) {
+          addToHistory(history, '$expression = $resultStr');
+          resultController.text = '';
+          return expressionController.text = resultStr;
+        }
+        return resultController.text = '= $resultStr';
       }
     }
 
-    return controller.text = resultStr;
+    return '';
   } catch (e) {
-    return controller.text = 'Error';
+    return resultController.text = '';
   }
 }
 
@@ -65,8 +78,9 @@ Future<List<String>> loadData(String keyToLoad) async {
 }
 
 // clear expression field
-String clearExpression(TextEditingController controller) {
-  return controller.text = '';
+void clearExpression(TextEditingController resultController, TextEditingController expressionController) {
+  resultController.text = '';
+  expressionController.text = '';
 }
 
 // remove one character or selected text

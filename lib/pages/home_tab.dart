@@ -3,11 +3,13 @@ import 'package:sum/utils/calculator_utils.dart';
 
 class MainTab extends StatefulWidget {
   final List<String> history;
+  final TextEditingController resultController;
   final TextEditingController expressionController;
 
   const MainTab({
     super.key,
     required this.history,
+    required this.resultController,
     required this.expressionController,
   });
 
@@ -59,17 +61,35 @@ class _MainTabState extends State<MainTab>{
         Builder(
           builder: (context) {
             final screenHeight = MediaQuery.of(context).size.height;
-            final topPadding = screenHeight * 0.2; // 20%
-            final bottomPadding = screenHeight * 0.05; // 5%
-            return TextField(
-              controller: widget.expressionController,
-              textAlign: TextAlign.end,
-              keyboardType: TextInputType.none,
-              cursorColor: Color(0xFF2E3436),
-              style: const TextStyle(fontSize: 30,),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(5, topPadding, 5, bottomPadding),
-                border: InputBorder.none,
+            final topPadding = screenHeight * 0.15; // 15%
+            final bottomPadding = screenHeight * 0.02; // 2%
+
+            return Container(
+              padding: EdgeInsets.fromLTRB(5, topPadding, 5, bottomPadding),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: widget.resultController,
+                    readOnly: true,
+                    enableInteractiveSelection: false,
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(fontSize: 50, ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  TextField(
+                    autofocus: true,
+                    controller: widget.expressionController,
+                    textAlign: TextAlign.end,
+                    keyboardType: TextInputType.none,
+                    cursorColor: Color(0xFF2E3436),
+                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  )
+                ],
               ),
             );
           },
@@ -78,7 +98,7 @@ class _MainTabState extends State<MainTab>{
         buttonRow([
           calcButton(child: const Text('('), onPressed: () => onButtonPressed(value: '(')),
           calcButton(child: const Text(')'), onPressed: () => onButtonPressed(value: ')')),
-          calcButton(child: const Icon(Icons.backspace_outlined, color: Color(0xFF2E3436), size: 20), onPressed: () => removeCharacter(widget.expressionController), onLongPress: () => clearExpression(widget.expressionController)),
+          calcButton(child: const Icon(Icons.backspace_outlined, color: Color(0xFF2E3436), size: 25), onPressed: () => removeCharacter(widget.expressionController), onLongPress: () => clearExpression(widget.resultController, widget.expressionController)),
           calcButton(child: const Text('/'), onPressed: () => onButtonPressed(value: '/')),
         ]),
         const SizedBox(height: 5),
@@ -107,7 +127,7 @@ class _MainTabState extends State<MainTab>{
           calcButton(child: const Text('0'), onPressed: () => onButtonPressed(value: '0')),
           calcButton(child: const Text('^'), onPressed: () => onButtonPressed(value: '^')),
           calcButton(child: const Text('.'), onPressed: () => onButtonPressed(value: '.')),
-          calcButton(child: const Text('='), onPressed: () => solveExpression(widget.expressionController, widget.expressionController.text, widget.history)),
+          calcButton(child: const Text('='), onPressed: () => solveExpression(widget.resultController, widget.expressionController, widget.expressionController.text, widget.history, true)),
         ]),
         const SizedBox(height: 5),
       ],

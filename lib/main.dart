@@ -17,8 +17,8 @@ class MainApp extends StatelessWidget {
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: Color(0xFF2E3436),
-            backgroundColor: Color(0xFFf6f5f4),
-            textStyle: const TextStyle(fontSize: 20),
+            backgroundColor: Color(0xFFe6e6e6),
+            textStyle: const TextStyle(fontSize: 25,),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20)
             ),
