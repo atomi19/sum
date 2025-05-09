@@ -12,9 +12,10 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0; // current tab index
-  List<String> _history = [];
+  List<Map<String,dynamic>> _history = [];
   final TextEditingController expressionController = TextEditingController();
   final TextEditingController resultController = TextEditingController();
+  final TextEditingController commentController = TextEditingController();
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _MainPageState extends State<MainPage> {
       HistoryTab(
         history: _history, 
         controller: expressionController, 
+        commentController: commentController,
         onExpressionSelected: () => setState(() {_currentIndex = 0;}),
       )
     ];

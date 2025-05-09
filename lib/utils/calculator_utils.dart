@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +9,7 @@ String solveExpression(
   TextEditingController resultController, 
   TextEditingController expressionController, 
   String expression, 
-  List<String> history,
+  List<Map<String,dynamic>> history,
   bool isAddingToHistory,
   ) {
   final Parser p = Parser();
@@ -29,9 +31,11 @@ String solveExpression(
     // check if this expression contains math operators
     for(var operator in operators) {
       if(expression.contains(operator)) {
+        // if true, then we have to add expression to history
+        // so equals to button was pressed
         if(isAddingToHistory) {
           addToHistory(history, '$expression = $resultStr');
-          resultController.text = '';
+          resultController.clear();
           return expressionController.text = resultStr;
         }
         return resultController.text = '= $resultStr';
@@ -44,43 +48,68 @@ String solveExpression(
   }
 }
 
+// new expression item with unique ID, expression itself, and empty comment
+Map<String, dynamic> createExpression(String expression) {
+  return {
+    'id': generateId(),
+    'expression': expression,
+    'comment': '',
+  };
+}
+
+// add comment to item in history
+void addComment(List<Map<String,dynamic>> history, String comment , int index) {
+  history[index]['comment'] = comment;
+  saveData(history, 'history');
+}
+
+// generate id for item in history
+int generateId() {
+  return Random().nextInt(1000000);
+}
+
 // save expression to history variable
-void addToHistory(List<String> history, String expression) {
-  history.add(expression);
-  saveData(history);
+void addToHistory(List<Map<String,dynamic>> history, String expression) {
+  history.add(createExpression(expression));
+  saveData(history, 'history');
 }
 
 // delete one item in history
-void deleteItemInHistory(List<String> history, int index) {
+void deleteItemInHistory(List<Map<String,dynamic>> history, int index) {
   history.removeAt(index);
-  saveData(history);
+  saveData(history, 'history');
 }
 
 // clear all history
-void clearHistory(List<String> history) {
+void clearHistory(List<Map<String,dynamic>> history) {
   if(history.isNotEmpty) {
     history.clear();
-    saveData(history);
+    saveData(history, 'history');
   }
 }
 
 // save data to shared_preferences
-Future<List<String>> saveData(List<String> history) async {
+Future<void> saveData(
+  List<Map<String,dynamic>> history, 
+  String keyName,
+  ) async {
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList('history', history);
-  return history;
+  final expressionJson = json.encode(history);
+  await prefs.setString(keyName, expressionJson);
 }
 
 // load data from shared_preferences
-Future<List<String>> loadData(String keyToLoad) async {
+Future<List<Map<String, dynamic>>> loadData(String keyToLoad) async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getStringList(keyToLoad) ?? [];
+  final expressionsJson = prefs.getString(keyToLoad) ?? '[]';
+  final List<dynamic> decodedList = json.decode(expressionsJson);
+  return decodedList.cast<Map<String, dynamic>>().toList();
 }
 
 // clear expression field
 void clearExpression(TextEditingController resultController, TextEditingController expressionController) {
-  resultController.text = '';
-  expressionController.text = '';
+  resultController.clear();
+  expressionController.clear();
 }
 
 // remove one character or selected text

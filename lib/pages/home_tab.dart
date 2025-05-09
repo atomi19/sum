@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
 class MainTab extends StatefulWidget {
-  final List<String> history;
+  final List<Map<String,dynamic>> history;
   final TextEditingController resultController;
   final TextEditingController expressionController;
 
