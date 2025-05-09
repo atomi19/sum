@@ -61,28 +61,45 @@ class _HistoryTabState extends State<HistoryTab>{
                     showDialog(
                       context: context, 
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Color(0xFFf6f5f4),
+                        backgroundColor: Colors.white,
                         title: const Text('Clear history'),
                         content: const Text('It will clear all your history!'),
                         actions:<Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.grey[300],
+                              foregroundColor: Colors.black,
+                              textStyle: Theme.of(context).textTheme.bodyMedium,
+                            ),
                             child: const Text('Cancel'),
                           ),
-                          TextButton(
+                          FilledButton(
                             onPressed: () {
                               setState(() {
                                 clearHistory(widget.history);
                               });
                               Navigator.pop(context);
                             },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              textStyle: Theme.of(context).textTheme.bodyMedium,
+                            ),
                             child: const Text('OK'),
                           ),
                         ],
                       )
                     );
                   },
-                  child: const Icon(Icons.delete_outline, color: Colors.red,)
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.grey.shade100,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(10)
+                  ),
+                  child: const Icon(Icons.delete_outline, color: Colors.redAccent,)
                 ),
               ],
             ),
@@ -104,11 +121,12 @@ class _HistoryTabState extends State<HistoryTab>{
                         title: Text(widget.history[index]['expression'], style: TextStyle(color: Colors.black, fontSize: 20)),
                         subtitle: widget.history[index]['comment'].toString().trim().isEmpty
                         ? null
-                        : Text(widget.history[index]['comment'], style: TextStyle(color: Colors.black, fontSize: 13)),
+                        : Text(widget.history[index]['comment'], style: TextStyle(color: Colors.black54, fontSize: 13)),
                         onTap: () {
                           // actions for a selected item in history
                           showModalBottomSheet(
                             context: context,
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
                             ),
@@ -146,6 +164,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                         Navigator.pop(context);
                                         widget.commentController.text = widget.history[index]['comment'];
                                         showModalBottomSheet(
+                                          backgroundColor: Colors.white,
                                           context: context,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
@@ -160,35 +179,52 @@ class _HistoryTabState extends State<HistoryTab>{
                                                 child: Column(
                                                   children: [
                                                     // comment
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(context);
-                                                            setState(() {
-                                                              addComment(widget.history, widget.commentController.text, index);
-                                                            });
-                                                            widget.commentController.clear();
-                                                          }, 
-                                                          child: const Text('Done')
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: TextField(
-                                                            controller: widget.commentController,
-                                                            minLines: 10,
-                                                            maxLines: 20,
-                                                            decoration: InputDecoration(
-                                                              hintText: 'Enter comment'
-                                                            ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
+                                                            color: Color(0xFFdeddda),
+                                                            width: 1.0,
                                                           )
                                                         )
-                                                      ],
+                                                      ),
+                                                      // app bar
+                                                      child: Padding(
+                                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                                setState(() {
+                                                                  addComment(widget.history, widget.commentController.text, index);
+                                                                });
+                                                                widget.commentController.clear();
+                                                              },
+                                                              style: TextButton.styleFrom(
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                ),
+                                                              ),
+                                                              child: const Text('Done', style: TextStyle(fontSize: 18)),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ),
+                                                    // comment text field
+                                                    TextField(
+                                                      controller: widget.commentController,
+                                                      minLines: 10,
+                                                      maxLines: 20,
+                                                      cursorColor: Color(0xFF2E3436),
+                                                      decoration: InputDecoration(
+                                                        hintText: 'Enter comment',
+                                                        border: InputBorder.none,
+                                                        contentPadding: EdgeInsets.all(10),
+                                                      ),
                                                     )
                                                   ],
                                                 )

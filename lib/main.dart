@@ -25,7 +25,7 @@ class MainApp extends StatelessWidget {
           ),
         ),
         textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(0xFFf6f5f4),
+          selectionColor: Color(0xFFdeddda),
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Color(0xFFf6f5f4),
