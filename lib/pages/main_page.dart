@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:sum/pages/history_tab.dart';
 import 'package:sum/pages/home_tab.dart';
+import 'package:sum/pages/settings_tab.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final VoidCallback toggleLightTheme;
+  final VoidCallback toggleDarkTheme;
+  final ThemeMode themeMode;
+
+  const MainPage({
+    super.key,
+    required this.toggleLightTheme,
+    required this.toggleDarkTheme,
+    required this.themeMode,
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -24,7 +34,13 @@ class _MainPageState extends State<MainPage> {
 
     expressionController.addListener(() {
       final expression = expressionController.text;
-      solveExpression(resultController, expressionController, expression, _history, false);
+      solveExpression(
+        resultController: resultController, 
+        expressionController: expressionController, 
+        expression: expression, 
+        history: _history, 
+        isAddingToHistory: false,
+      );
     });
   }
 
@@ -43,17 +59,26 @@ class _MainPageState extends State<MainPage> {
         history: _history,
         resultController: resultController,
         expressionController: expressionController,
+        toggleLightTheme: widget.toggleLightTheme,
+        toggleDarkTheme: widget.toggleDarkTheme,
+        themeMode: widget.themeMode,
+        switchTab: () => setState(() {_currentIndex = 2;}),
       ),
       HistoryTab(
         history: _history, 
         controller: expressionController, 
         commentController: commentController,
-        onExpressionSelected: () => setState(() {_currentIndex = 0;}),
+        switchTab: () => setState(() {_currentIndex = 0;}),
+      ),
+      SettingsTab(
+        toggleLightTheme: widget.toggleLightTheme, 
+        toggleDarkTheme: widget.toggleDarkTheme, 
+        themeMode: widget.themeMode
       )
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: IndexedStack(
         index: _currentIndex,
         children: tabs,
@@ -73,6 +98,11 @@ class _MainPageState extends State<MainPage> {
               icon: Icon(Icons.history_outlined),
               selectedIcon: Icon(Icons.history),
               label: 'History',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: 'Settings'
             )
           ]
         ),

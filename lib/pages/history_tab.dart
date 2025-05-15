@@ -5,14 +5,14 @@ class HistoryTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
   final TextEditingController controller;
   final TextEditingController commentController;
-  final void Function() onExpressionSelected;
+  final void Function() switchTab;
 
   const HistoryTab({
     super.key,
     required this.history,
     required this.controller,
     required this.commentController,
-    required this.onExpressionSelected,
+    required this.switchTab,
   });
 
   @override
@@ -47,21 +47,28 @@ class _HistoryTabState extends State<HistoryTab>{
         children: [
           // app bar
           Container(
-            color: Color(0xFFfcfcfc),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1.0,
+                )
+              )
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'History',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  'History', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
                   onPressed: () {
                     showDialog(
                       context: context, 
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.secondary,
                         title: const Text('Clear history'),
                         content: const Text('It will clear all your history!'),
                         actions:<Widget>[
@@ -93,11 +100,9 @@ class _HistoryTabState extends State<HistoryTab>{
                     );
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.grey.shade100,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.all(10)
                   ),
                   child: const Icon(Icons.delete_outline, color: Colors.redAccent,)
                 ),
@@ -115,18 +120,18 @@ class _HistoryTabState extends State<HistoryTab>{
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Color(0xFFdeddda), width: 1))
+                        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1))
                       ),
                       child: ListTile(
-                        title: Text(widget.history[index]['expression'], style: TextStyle(color: Colors.black, fontSize: 20)),
+                        title: Text(widget.history[index]['expression'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20)),
                         subtitle: widget.history[index]['comment'].toString().trim().isEmpty
                         ? null
-                        : Text(widget.history[index]['comment'], style: TextStyle(color: Colors.black54, fontSize: 13)),
+                        : Text(widget.history[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
                         onTap: () {
                           // actions for a selected item in history
                           showModalBottomSheet(
                             context: context,
-                            backgroundColor: Colors.white,
+                            backgroundColor: Theme.of(context).colorScheme.secondary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
                             ),
@@ -143,7 +148,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                       onTap: () {
                                         Navigator.pop(context);
                                         insertData(widget.history[index]['expression'], 'expression');
-                                        widget.onExpressionSelected();
+                                        widget.switchTab();
                                       },
                                     ),
                                     // take result action
@@ -153,7 +158,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                       onTap: () {
                                         Navigator.pop(context);
                                         insertData(widget.history[index]['expression'], 'result');
-                                        widget.onExpressionSelected();
+                                        widget.switchTab();
                                       },
                                     ),
                                     // comment item in history
@@ -164,7 +169,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                         Navigator.pop(context);
                                         widget.commentController.text = widget.history[index]['comment'];
                                         showModalBottomSheet(
-                                          backgroundColor: Colors.white,
+                                          backgroundColor: Theme.of(context).colorScheme.secondary,
                                           context: context,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
@@ -178,12 +183,12 @@ class _HistoryTabState extends State<HistoryTab>{
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
-                                                    // comment
+                                                    // comment 
                                                     Container(
                                                       decoration: BoxDecoration(
                                                         border: Border(
                                                           bottom: BorderSide(
-                                                            color: Color(0xFFdeddda),
+                                                            color: Theme.of(context).colorScheme.secondary,
                                                             width: 1.0,
                                                           )
                                                         )
@@ -219,7 +224,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                                       controller: widget.commentController,
                                                       minLines: 10,
                                                       maxLines: 20,
-                                                      cursorColor: Color(0xFF2E3436),
+                                                      cursorColor: Theme.of(context).colorScheme.primary,
                                                       decoration: InputDecoration(
                                                         hintText: 'Enter comment',
                                                         border: InputBorder.none,

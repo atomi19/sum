@@ -5,13 +5,13 @@ import 'package:math_expressions/math_expressions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // function to solve expression
-String solveExpression(
-  TextEditingController resultController, 
-  TextEditingController expressionController, 
-  String expression, 
-  List<Map<String,dynamic>> history,
-  bool isAddingToHistory,
-  ) {
+String solveExpression({
+  required TextEditingController resultController, 
+  required TextEditingController expressionController, 
+  required String expression, 
+  required List<Map<String,dynamic>> history,
+  required bool isAddingToHistory,
+  }) {
   final Parser p = Parser();
   List<String> operators = ['/', '*', '-', '+', '^'];
 
@@ -26,7 +26,6 @@ String solveExpression(
 
     // format result as a whole number if it's decimal is 0, otherwise show 2 decimals
     String resultStr = result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
-
     // save expression to history
     // check if this expression contains math operators
     for(var operator in operators) {
