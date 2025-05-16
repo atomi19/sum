@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sum/pages/main_page.dart';
 import 'package:sum/theme/dark_theme.dart';
 import 'package:sum/theme/light_theme.dart';
+import 'package:sum/utils/calculator_utils.dart';
 
 void main() {
   runApp(const MainApp());
@@ -20,12 +21,14 @@ class MainAppState extends State<MainApp> {
   void _toggleLightTheme() {
     setState(() {
       _themeMode = ThemeMode.light;
+      saveData('theme_mode', 'light');
     });
   }
 
   void _toggleDarkTheme() {
     setState(() {
       _themeMode = ThemeMode.dark;
+      saveData('theme_mode', 'dark');
     });
   }
 

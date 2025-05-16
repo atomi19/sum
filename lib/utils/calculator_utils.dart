@@ -59,7 +59,7 @@ Map<String, dynamic> createExpression(String expression) {
 // add comment to item in history
 void addComment(List<Map<String,dynamic>> history, String comment , int index) {
   history[index]['comment'] = comment;
-  saveData(history, 'history');
+  saveData('history', history);
 }
 
 // generate id for item in history
@@ -70,35 +70,43 @@ int generateId() {
 // save expression to history variable
 void addToHistory(List<Map<String,dynamic>> history, String expression) {
   history.add(createExpression(expression));
-  saveData(history, 'history');
+  saveData('history', history);
 }
 
 // delete one item in history
 void deleteItemInHistory(List<Map<String,dynamic>> history, int index) {
   history.removeAt(index);
-  saveData(history, 'history');
+  saveData('history', history);
 }
 
 // clear all history
 void clearHistory(List<Map<String,dynamic>> history) {
   if(history.isNotEmpty) {
     history.clear();
-    saveData(history, 'history');
+    saveData('history', history);
   }
 }
 
 // save data to shared_preferences
-Future<void> saveData(
-  List<Map<String,dynamic>> history, 
-  String keyName,
-  ) async {
+Future<void> saveData(String key, dynamic data) async {
   final prefs = await SharedPreferences.getInstance();
-  final expressionJson = json.encode(history);
-  await prefs.setString(keyName, expressionJson);
+
+  if(data is String) {
+    await prefs.setString(key, data);
+  } else {
+    final jsonData = json.encode(data);
+    await prefs.setString(key, jsonData);
+  }
 }
 
 // load data from shared_preferences
-Future<List<Map<String, dynamic>>> loadData(String keyToLoad) async {
+Future<String?> loadData(String key) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(key);
+}
+
+// load history from shared_preferences
+Future<List<Map<String, dynamic>>> loadHistory(String keyToLoad) async {
   final prefs = await SharedPreferences.getInstance();
   final expressionsJson = prefs.getString(keyToLoad) ?? '[]';
   final List<dynamic> decodedList = json.decode(expressionsJson);

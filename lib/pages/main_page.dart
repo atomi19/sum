@@ -30,6 +30,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    _loadTheme();
     _loadHistory();
 
     expressionController.addListener(() {
@@ -44,9 +45,21 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  // load theme from shared_preferences
+  Future <void> _loadTheme() async {
+    final loadedData = await loadData('theme_mode');
+    setState(() {
+      if(loadedData == 'light') {
+        widget.toggleLightTheme();
+      } else {
+        widget.toggleDarkTheme();
+      }
+    });
+  }
+
   // load history from shared_preferences
   Future<void> _loadHistory() async {
-    final loadedHistory = await loadData('history');
+    final loadedHistory = await loadHistory('history');
     setState(() {
       _history = loadedHistory;
     });
