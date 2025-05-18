@@ -30,11 +30,19 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    _initializeControllers();
     _loadTheme();
     _loadHistory();
 
+  }
+
+  Future<void> _initializeControllers() async {
+    final expression = await loadData('expression');
+    expressionController.text = expression ?? '';
+
     expressionController.addListener(() {
       final expression = expressionController.text;
+      saveData('expression', expression);
       solveExpression(
         resultController: resultController, 
         expressionController: expressionController, 
@@ -45,9 +53,10 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  // load theme from shared_preferences
-  Future <void> _loadTheme() async {
-    final loadedData = await loadData('theme_mode');
+  // load string from shared_preferences
+  Future<void> _loadTheme() async {
+    final String? loadedData = await loadData('theme_mode');
+
     setState(() {
       if(loadedData == 'light') {
         widget.toggleLightTheme();
@@ -55,6 +64,7 @@ class _MainPageState extends State<MainPage> {
         widget.toggleDarkTheme();
       }
     });
+
   }
 
   // load history from shared_preferences
