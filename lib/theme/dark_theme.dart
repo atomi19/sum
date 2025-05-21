@@ -4,27 +4,44 @@ ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      foregroundColor: Color(0xFFffffff),
+      foregroundColor: Colors.white,
       backgroundColor: Color(0xFF171717),
       textStyle: const TextStyle(fontSize: 25,),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20)
+        borderRadius: BorderRadius.circular(10)
       ),
     ),
   ),
+  iconButtonTheme: IconButtonThemeData(
+    style: IconButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: Color(0xFF171717),
+      iconSize: 25,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10)
+      ),
+    )
+  ),
+  filledButtonTheme: FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10)
+      ),
+    )
+  ),
   textSelectionTheme: TextSelectionThemeData(
-    selectionColor: Color(0xFF444444),
+    selectionColor: Colors.blue.shade800,
   ),
   navigationBarTheme: NavigationBarThemeData(
     backgroundColor: Color(0xFF202020),
     indicatorColor: Color(0xFF303030),
     iconTheme: WidgetStateProperty.all(
-      IconThemeData(color: Color(0xFFffffff))
+      IconThemeData(color: Colors.white)
     )
   ),
   colorScheme: ColorScheme.dark(
     surface: Colors.black,
-    primary: Color(0xFFffffff),
-    secondary: Color(0xFF303030)
+    primary: Colors.white,
+    secondary: Colors.grey.shade900,
   )
 );

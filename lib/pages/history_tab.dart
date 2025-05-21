@@ -68,15 +68,13 @@ class _HistoryTabState extends State<HistoryTab>{
                     showDialog(
                       context: context, 
                       builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                        backgroundColor: Theme.of(context).colorScheme.tertiary,
                         title: const Text('Clear history'),
                         content: const Text('It will clear all your history!'),
                         actions:<Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context),
                             style: TextButton.styleFrom(
-                              backgroundColor: Colors.grey[300],
-                              foregroundColor: Colors.black,
                               textStyle: Theme.of(context).textTheme.bodyMedium,
                             ),
                             child: const Text('Cancel'),
@@ -104,7 +102,7 @@ class _HistoryTabState extends State<HistoryTab>{
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Icon(Icons.delete_outline, color: Colors.redAccent,)
+                  child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
                 ),
               ],
             ),
@@ -178,12 +176,12 @@ class _HistoryTabState extends State<HistoryTab>{
                                             return Padding(
                                             padding: EdgeInsets.only(
                                               top: 10,
-                                              bottom: MediaQuery.of(context).viewInsets.bottom + 20
+                                              bottom: MediaQuery.of(context).viewInsets.bottom
                                             ),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
-                                                    // comment 
+                                                    // top bar of modal bottom sheet
                                                     Container(
                                                       decoration: BoxDecoration(
                                                         border: Border(
@@ -193,9 +191,8 @@ class _HistoryTabState extends State<HistoryTab>{
                                                           )
                                                         )
                                                       ),
-                                                      // app bar
                                                       child: Padding(
-                                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                        padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
@@ -217,7 +214,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                                             )
                                                           ],
                                                         ),
-                                                      )
+                                                      ),
                                                     ),
                                                     // comment text field
                                                     TextField(

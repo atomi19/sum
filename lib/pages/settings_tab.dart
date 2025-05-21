@@ -53,12 +53,19 @@ class _SettingsTabState extends State<SettingsTab> {
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: const Text('Appearance', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 ),
-                ListTile(
-                  title: const Text('Theme'),
-                  tileColor: Theme.of(context).colorScheme.secondary,
-                  contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  trailing: TextButton(
-                    onPressed: () {
+                Card(
+                  color: Theme.of(context).colorScheme.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: EdgeInsets.zero,
+                  elevation: 0,
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    title: const Text('Theme'),
+                    tileColor: Theme.of(context).colorScheme.secondary,
+                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    onTap: () {
                       showModalBottomSheet(
                         context: context,
                         backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -91,19 +98,14 @@ class _SettingsTabState extends State<SettingsTab> {
                           );
                         }
                       );
-                    }, 
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
+                    },
+                    trailing: Text(
                       widget.themeMode == ThemeMode.light
                       ? 'Light'
                       : 'Dark',
-                      style: TextStyle(fontSize: 18)
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)
                     ),
-                  )
+                  ),
                 ),
                 // more section
                 Padding(
@@ -111,81 +113,89 @@ class _SettingsTabState extends State<SettingsTab> {
                   child: const Text('More', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 ),
                 // about subsection
-                ListTile(
-                  title: const Text('About'),
-                  tileColor: Theme.of(context).colorScheme.secondary,
-                  contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ListTile(
-                              tileColor: Theme.of(context).colorScheme.secondary,
-                              title: Text('Name', style: TextStyle(fontSize: 15)),
-                              trailing: Text(appName, style: TextStyle(fontSize: 15)),
-                            ),
-                            ListTile(
-                              tileColor: Theme.of(context).colorScheme.secondary,
-                              title: Text('Version', style: TextStyle(fontSize: 15)),
-                              trailing: Text(appVersion, style: TextStyle(fontSize: 15)),
-                            ),
-                            ListTile(
-                              tileColor: Theme.of(context).colorScheme.secondary,
-                              title: Text('Made by', style: TextStyle(fontSize: 15)),
-                              subtitle: SelectableText('https://github.com/atomi19'),
-                              trailing: Text('atomi19', style: TextStyle(fontSize: 15)),
-                            ),
-                            ListTile(
-                              tileColor: Theme.of(context).colorScheme.secondary,
-                              title: Text('Licences', style: TextStyle(fontSize: 15)),
-                              trailing: const Icon(Icons.arrow_right),
-                              onTap: () {
-                                Navigator.pop(context);
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ListTile(
-                                          title: const Text('App license'),
-                                          subtitle: const SelectableText('https://github.com/atomi19/sum/blob/main/LICENSE.txt'),
-                                        ),
-                                        ListTile(
-                                          title: const Text('Third-party licenses'),
-                                          trailing: const Icon(Icons.arrow_right),
-                                          onTap: () {
-                                            showLicensePage(
-                                              context: context,
-                                              applicationName: appName,
-                                              applicationVersion: appVersion,
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ), 
-                                  )
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    );
-                  },
+                Card(
+                  color: Theme.of(context).colorScheme.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: EdgeInsets.zero,
+                  elevation: 0,
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    title: const Text('About'),
+                    contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                tileColor: Theme.of(context).colorScheme.secondary,
+                                title: Text('Name', style: TextStyle(fontSize: 15)),
+                                trailing: Text(appName, style: TextStyle(fontSize: 15)),
+                              ),
+                              ListTile(
+                                tileColor: Theme.of(context).colorScheme.secondary,
+                                title: Text('Version', style: TextStyle(fontSize: 15)),
+                                trailing: Text(appVersion, style: TextStyle(fontSize: 15)),
+                              ),
+                              ListTile(
+                                tileColor: Theme.of(context).colorScheme.secondary,
+                                title: Text('Made by', style: TextStyle(fontSize: 15)),
+                                subtitle: SelectableText('https://github.com/atomi19'),
+                                trailing: Text('atomi19', style: TextStyle(fontSize: 15)),
+                              ),
+                              ListTile(
+                                tileColor: Theme.of(context).colorScheme.secondary,
+                                title: Text('Licences', style: TextStyle(fontSize: 15)),
+                                trailing: const Icon(Icons.arrow_right),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ListTile(
+                                            title: const Text('App license'),
+                                            subtitle: const SelectableText('https://github.com/atomi19/sum/blob/main/LICENSE.txt'),
+                                          ),
+                                          ListTile(
+                                            title: const Text('Third-party licenses'),
+                                            trailing: const Icon(Icons.arrow_right),
+                                            onTap: () {
+                                              showLicensePage(
+                                                context: context,
+                                                applicationName: appName,
+                                                applicationVersion: appVersion,
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ), 
+                                    )
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        )
+                      );
+                    },
+                  )
                 )
               ],
             ),
