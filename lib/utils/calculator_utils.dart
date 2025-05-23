@@ -48,28 +48,37 @@ String solveExpression({
 }
 
 // new expression item with unique ID, expression itself, and empty comment
-Map<String, dynamic> createExpression(String expression) {
+Map<String, dynamic> createExpression(List<Map<String,dynamic>> history, String expression) {
   return {
-    'id': generateId(),
+    'id': generateId(history),
     'expression': expression,
     'comment': '',
   };
 }
 
 // add comment to item in history
-void addComment(List<Map<String,dynamic>> history, String comment , int index) {
+void addComment(List<Map<String,dynamic>> history, String comment, int index) {
   history[index]['comment'] = comment;
   saveData('history', history);
 }
 
 // generate id for item in history
-int generateId() {
-  return Random().nextInt(1000000);
+int generateId(List<Map<String,dynamic>> history) {
+  final random = Random();
+  int id;
+
+
+  // make sure id is unique, and there is no same id in history
+  do {
+    id = random.nextInt(1000000);
+  } while (history.any((item) => item['id'] == id));
+
+  return id;
 }
 
 // save expression to history variable
 void addToHistory(List<Map<String,dynamic>> history, String expression) {
-  history.add(createExpression(expression));
+  history.add(createExpression(history, expression));
   saveData('history', history);
 }
 
