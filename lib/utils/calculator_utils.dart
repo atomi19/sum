@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// function to solve expression
-String solveExpression({
+String processExpressionResult({
   required TextEditingController resultController, 
   required TextEditingController expressionController, 
   required String expression, 
   required List<Map<String,dynamic>> history,
   required bool isAddingToHistory,
   }) {
-  final Parser p = Parser();
   List<String> operators = ['/', '*', '-', '+', '^'];
 
   if(expression.trim().isEmpty) {
@@ -21,11 +19,7 @@ String solveExpression({
   }
 
   try {
-    Expression parsedExpression = p.parse(expression);
-    double result = parsedExpression.evaluate(EvaluationType.REAL, ContextModel());
-
-    // format result as a whole number if it's decimal is 0, otherwise show 2 decimals
-    String resultStr = result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
+    String resultStr = solveExpression(expression: expression);
     // save expression to history
     // check if this expression contains math operators
     for(var operator in operators) {
@@ -44,6 +38,22 @@ String solveExpression({
     return '';
   } catch (e) {
     return resultController.text = '';
+  }
+}
+
+// solve expression
+String solveExpression({
+  required String expression
+}) {
+    final Parser p = Parser();
+    try {
+    Expression parsedExpression = p.parse(expression);
+    double result = parsedExpression.evaluate(EvaluationType.REAL, ContextModel());
+
+    // format result as a whole number if it's decimal is 0, otherwise show 2 decimals
+    return result % 1 == 0 ? result.toInt().toString() : result.toStringAsFixed(2);
+  } catch (e) {
+    return '';
   }
 }
 

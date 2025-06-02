@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/calculator_utils.dart';
+import 'package:sum/widgets/calc_widgets.dart';
 
 class MainTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
@@ -29,37 +30,6 @@ class _MainTabState extends State<MainTab>{
   // handle button click, print the value to the expression field
   void onButtonPressed({required value}) {
     widget.expressionController.text += value;
-  }
-
-  // build calculator button
-  Widget calcButton({
-    required Widget child,
-    required VoidCallback onPressed,
-    VoidCallback? onLongPress,
-    int flex = 1,
-  }) {
-    return Expanded(
-      flex: flex,
-      child: SizedBox.expand(
-        child: TextButton(
-          onPressed: onPressed, 
-          onLongPress: onLongPress,
-          child: child,
-        ),
-      )
-    );
-  }
-
-  // build row with buttons
-  Widget buttonRow(List<Widget> buttons) {
-    return Expanded(
-      child: Row(
-        children: [
-          const SizedBox(width: 5),
-          ...buttons.expand((button) => [button, const SizedBox(width: 5)])
-        ],
-      )
-    );
   }
 
   @override
@@ -139,7 +109,7 @@ class _MainTabState extends State<MainTab>{
             calcButton(child: const Text('.'), onPressed: () => onButtonPressed(value: '.')),
             calcButton(
               child: const Text('='), 
-              onPressed: () => solveExpression(
+              onPressed: () => processExpressionResult(
                 resultController: widget.resultController, 
                 expressionController: widget.expressionController, 
                 expression: widget.expressionController.text, 

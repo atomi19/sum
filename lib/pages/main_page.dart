@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sum/pages/history_tab.dart';
 import 'package:sum/pages/home_tab.dart';
+import 'package:sum/pages/convert_tab.dart';
 import 'package:sum/pages/settings_tab.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
@@ -43,7 +44,7 @@ class _MainPageState extends State<MainPage> {
     expressionController.addListener(() {
       final expression = expressionController.text;
       saveData('expression', expression);
-      solveExpression(
+      processExpressionResult(
         resultController: resultController, 
         expressionController: expressionController, 
         expression: expression, 
@@ -87,6 +88,7 @@ class _MainPageState extends State<MainPage> {
         themeMode: widget.themeMode,
         switchTab: () => setState(() {_currentIndex = 2;}),
       ),
+      ConvertTab(),
       HistoryTab(
         history: _history, 
         controller: expressionController, 
@@ -116,6 +118,11 @@ class _MainPageState extends State<MainPage> {
               icon: Icon(Icons.home_outlined),
               selectedIcon: Icon(Icons.home),
               label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.swap_horiz_rounded),
+              selectedIcon: Icon(Icons.swap_horiz_rounded),
+              label: 'Convert'
             ),
             NavigationDestination(
               icon: Icon(Icons.history_outlined),
