@@ -1,4 +1,4 @@
-enum UnitType{length, time, weight}
+enum UnitType{data, length, power, time, weight}
 
 class Unit {
   final String name;
@@ -27,11 +27,25 @@ class TemperatureUnit {
 }
 
 final Map<UnitType, Map<String, Unit>> units = {
+  UnitType.data: {
+    'Bit': Unit(name: 'bit', symbol: 'b', factor: 1.0), // base unit
+    'Byte': Unit(name: 'byte', symbol: 'B', factor: 8),
+    'Kibibyte': Unit(name: 'kibibyte', symbol: 'KiB', factor: 8192.0), 
+    'Mebibyte': Unit(name: 'mebibyte', symbol: 'MiB', factor: 8388608.0),
+    'Gibibyte': Unit(name: 'gibibyte', symbol: 'GiB', factor: 8589934592.0),
+    'Tebibyte': Unit(name: 'tebibyte', symbol: 'TiB', factor: 8796093022208.0),
+  },
   UnitType.length: {
     'Millimeter': Unit(name: 'millimeter', symbol: 'mm', factor: 0.001),
     'Centimeter': Unit(name: 'centimeter', symbol: 'cm', factor: 0.01),
     'Meter': Unit(name: 'meter', symbol: 'm', factor: 1.0), // base unit
     'Kilometer': Unit(name: 'kilometer', symbol: 'km', factor: 1000),
+  },
+  UnitType.power: {
+    'Watt': Unit(name: 'watt', symbol: 'W', factor: 1.0), // base unit
+    'Kilowatt': Unit(name: 'kilowatt', symbol: 'kW', factor: 1000),
+    'Mechanical horsepower': Unit(name: 'mechanical_horsepower', symbol: 'hp', factor: 745.7),
+    'Metric horsepower': Unit(name: 'metric_horsepower', symbol: 'PS', factor: 735.5),
   },
   UnitType.time: {
     'Millisecond': Unit(name: 'millisecond', symbol: 'ms', factor: 0.001),

@@ -21,7 +21,9 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
   String _selectedUnit = '';
   String _currentUnitType = '';
   Map<String, String> unitResults = {}; // store results of conversion to all units
+  final List<String> _dataUnits = ['Bit', 'Byte', 'Kibibyte', 'Mebibyte', 'Gibibyte', 'Tebibyte'];
   final List<String> _lengthUnits = ['Millimeter', 'Centimeter', 'Meter', 'Kilometer'];
+  final List<String> _powerUnits = ['Watt', 'Kilowatt', 'Mechanical horsepower', 'Metric horsepower'];
   final List<String> _temperatureUnits = ['Celsius', 'Fahrenheit', 'Kelvin'];
   final List<String> _timeUnits = ['Millisecond', 'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'];
   final List<String> _weightUnits = ['Milligram', 'Gram', 'Kilogram', 'Tonne'];
@@ -41,9 +43,15 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
   // selected from convert_tab  
   List<String> _getSelectedUnits() {
     switch(widget.conversionType.toLowerCase()) {
+      case 'data':
+        _currentUnitType = 'data';
+        return _dataUnits;
       case 'length':
         _currentUnitType = 'length';
         return _lengthUnits;
+      case 'power':
+        _currentUnitType = 'power';
+        return _powerUnits;
       case 'temperature':
         _currentUnitType = 'temperature';
         return _temperatureUnits;
@@ -76,8 +84,16 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
       for (var unit in _getSelectedUnits()) {
         try {
           switch (_currentUnitType) {
+            case 'data':
+              final result = convert(value, _selectedUnit, unit, UnitType.data);
+              unitResults[unit] = result.toString();
+              break;
             case 'length':
               final result = convert(value, _selectedUnit, unit, UnitType.length);
+              unitResults[unit] = result.toString();
+              break;
+            case 'power':
+              final result = convert(value, _selectedUnit, unit, UnitType.power);
               unitResults[unit] = result.toString();
               break;
             case 'temperature':
@@ -99,6 +115,25 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
         }
       }
     });
+  }
+
+  String _getShortUnitName(String fullUnitName) {
+    switch (_currentUnitType) {
+      case 'data':
+        return units[UnitType.data]![fullUnitName]!.symbol;
+      case 'length':
+        return units[UnitType.length]![fullUnitName]!.symbol;
+      case 'power':
+        return units[UnitType.power]![fullUnitName]!.symbol;
+      case 'temperature':
+        return temperatureUnits[fullUnitName]!.symbol;
+      case 'time':
+        return units[UnitType.time]![fullUnitName]!.symbol;
+      case 'weight':
+        return units[UnitType.weight]![fullUnitName]!.symbol;
+      default:
+        return '';
+    }
   }
 
   @override
@@ -129,6 +164,13 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
                     clipBehavior: Clip.antiAlias,           
                     child: ListTile(
                       title: Text(units[index]),
+                      trailing: Text(
+                        _getShortUnitName(units[index]),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Theme.of(context).disabledColor,
+                        ),
+                      ),
                       subtitle: Text(
                         unitResults[units[index]] ?? '0', 
                         style: TextStyle(fontWeight: FontWeight.bold)

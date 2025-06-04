@@ -15,6 +15,23 @@ class _ConvertTabState extends State<ConvertTab> {
       MaterialPageRoute(builder: (context) => ConvertFromToPage(conversionType: conversionType,))
     );
   }
+
+  // create section with specific unit category(e.g. length, time, etc.)
+  Widget _createUnitSection(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+    return Card(
+      color: Theme.of(context).colorScheme.secondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        onTap: () => onTap(),
+      ),
+    );
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -43,58 +60,12 @@ class _ConvertTabState extends State<ConvertTab> {
           Expanded(
             child: ListView(
               children: [
-                Card(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 0,
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.straighten),
-                    title: const Text('Length'),
-                    onTap: () => _navigateToConvertFromToPage('Length'),
-                  ),
-                ),
-                Card(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 0,
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.thermostat_outlined),
-                    title: const Text('Temperature'),
-                    onTap: () => _navigateToConvertFromToPage('Temperature'),
-                  ),
-                ),
-                Card(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 0,
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.schedule_outlined),
-                    title: const Text('Time'),
-                    onTap: () => _navigateToConvertFromToPage('Time'),
-                  ),
-                ),
-                Card(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 0,
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.fitness_center_outlined),
-                    title: const Text('Weight'),
-                    onTap: () => _navigateToConvertFromToPage('Weight'),
-                  ),
-                ),
+                _createUnitSection(context, Icons.storage_outlined, 'Data', () => _navigateToConvertFromToPage('Data')),
+                _createUnitSection(context, Icons.straighten, 'Length', () => _navigateToConvertFromToPage('Length')),
+                _createUnitSection(context, Icons.bolt_outlined, 'Power', () => _navigateToConvertFromToPage('Power')),
+                _createUnitSection(context, Icons.thermostat_outlined, 'Temperature', () => _navigateToConvertFromToPage('Temperature')),
+                _createUnitSection(context, Icons.schedule_outlined, 'Time', () => _navigateToConvertFromToPage('Time')),
+                _createUnitSection(context, Icons.fitness_center_outlined, 'Weight', () => _navigateToConvertFromToPage('Weight')),
               ],
             )
           ),
