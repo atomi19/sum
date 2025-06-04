@@ -20,6 +20,10 @@ String processExpressionResult({
 
   try {
     String resultStr = solveExpression(expression: expression);
+    // fix showing equals sign without result(when result is empty)
+    if(resultStr == '') {
+      return '';
+    }
     // save expression to history
     // check if this expression contains math operators
     for(var operator in operators) {
