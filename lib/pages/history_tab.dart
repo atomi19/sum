@@ -22,6 +22,19 @@ class HistoryTab extends StatefulWidget {
 class _HistoryTabState extends State<HistoryTab>{
   // insert expression or expression's result into expression field
   void insertData(String expression, String action) {
+    switch (action) {
+      case 'expression':
+        widget.controller.text = splitExpressionAndResult(expression, action);
+        break;
+      case 'result':
+        widget.controller.text = splitExpressionAndResult(expression, action);
+        break;
+      default:
+    }
+  }
+
+  // split the full expression into expression and result
+  String splitExpressionAndResult(String expression, String action) {
     List<String> expressionParts = expression.split('=');
 
     if(expressionParts.length == 2) {
@@ -30,14 +43,12 @@ class _HistoryTabState extends State<HistoryTab>{
 
       switch (action) {
         case 'expression':
-          widget.controller.text = expression;
-          break;
+          return expression;
         case 'result':
-          widget.controller.text = result;
-          break;
-        default:
+          return result;
       }
     }
+    return '';
   }
 
   @override
@@ -157,6 +168,24 @@ class _HistoryTabState extends State<HistoryTab>{
                                         Navigator.pop(context);
                                         insertData(widget.history[index]['expression'], 'result');
                                         widget.switchTab();
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.copy),
+                                      title: const Text('Copy result'),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        String data = splitExpressionAndResult(widget.history[index]['expression'], 'result');
+                                        copyToClipboard(data);
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.copy_all),
+                                      title: const Text('Copy all'),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        String data = widget.history[index]['expression'];
+                                        copyToClipboard(data);
                                       },
                                     ),
                                     // comment item in history

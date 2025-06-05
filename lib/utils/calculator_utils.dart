@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -169,4 +170,9 @@ String removeCharacter(TextEditingController controller) {
     );
   }
   return controller.text;
+}
+
+// copy something to the clipboard
+void copyToClipboard(String data) async {
+  await Clipboard.setData(ClipboardData(text: data));
 }
