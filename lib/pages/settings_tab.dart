@@ -19,7 +19,7 @@ class SettingsTab extends StatefulWidget {
 
 class _SettingsTabState extends State<SettingsTab> {
   final String appName = 'Sum';
-  final String appVersion = '23.05.2025';
+  final String appVersion = '06.06.2025';
 
   @override
   Widget build(BuildContext context) {

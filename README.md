@@ -1,7 +1,9 @@
 # Sum
 Sum is a cross-platform calculator
 
-<img src="assets/screenshots/sum_preview.png" width=325>
+
+<img src="assets/screenshots/sum_preview_light.png" width=300>
+<img src="assets/screenshots/sum_preview_dark.png" width=250>
 
 ## Getting Started
 
@@ -36,6 +38,11 @@ flutter pub get
 ```
 flutter run
 ```
+
+## Features
+- Light and dark theme
+- History
+- Units converter
 
 ## License
 This project is licensed under the [MIT](LICENSE.txt) License
