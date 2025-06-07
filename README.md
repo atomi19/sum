@@ -1,11 +1,22 @@
 # Sum
-Sum is a cross-platform calculator
+Sum is a cross-platform calculator 
 
-
-<img src="assets/screenshots/sum_preview_light.png" width=300>
-<img src="assets/screenshots/sum_preview_dark.png" width=250>
+<p align="left">
+    <img src="assets/screenshots/sum_preview_light.png" width=300>
+    <img src="assets/screenshots/sum_preview_dark.png" width=250>
+</p>
 
 ## Getting Started
+### **Option 1 (Install from a file):**
+Get release package from [Releases](https://github.com/atomi19/sum/releases) page for your platform
+- Android
+    - .apk file
+- Linux:
+    - .deb Debian/Ubuntu
+    - .rpm Fedora/OpenSUSE
+
+Simply download and install file for your platform 
+### **Option 2 (build from source):**
 
 ### Prerequisites
 - Flutter SDK ([Flutter official site](https://flutter.dev/))
@@ -18,7 +29,6 @@ Sum is a cross-platform calculator
 - [math_expressions](https://pub.dev/packages/math_expressions)
 - [shared_preferences](https://pub.dev/packages/shared_preferences)
 
-### Installation
 1. Clone the repo:
 ```bash 
 git clone https://github.com/atomi19/sum.git
