@@ -34,7 +34,6 @@ class _MainPageState extends State<MainPage> {
     _initializeControllers();
     _loadTheme();
     _loadHistory();
-
   }
 
   Future<void> _initializeControllers() async {
@@ -76,6 +75,15 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  // create tab items(home, convert, history, and settings)
+  Widget _createTabItem(IconData icon, IconData selectedIcon, label) {
+    return NavigationDestination(
+      icon: Icon(icon),
+      selectedIcon: Icon(selectedIcon),
+      label: label
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> tabs = [
@@ -113,27 +121,11 @@ class _MainPageState extends State<MainPage> {
         child: NavigationBar(
           selectedIndex: _currentIndex,
           onDestinationSelected: (index) => setState(() => _currentIndex = index),
-          destinations: const <Widget>[
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.swap_horiz_rounded),
-              selectedIcon: Icon(Icons.swap_horiz_rounded),
-              label: 'Convert'
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.history_outlined),
-              selectedIcon: Icon(Icons.history),
-              label: 'History',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: 'Settings'
-            )
+          destinations: <Widget>[
+            _createTabItem(Icons.home_outlined, Icons.home, 'Home'),
+            _createTabItem(Icons.swap_horiz_rounded, Icons.swap_horizontal_circle_rounded, 'Convert'),
+            _createTabItem(Icons.access_time_outlined, Icons.access_time_filled, 'History'),
+            _createTabItem(Icons.settings_outlined, Icons.settings, 'Settings'),
           ]
         ),
       )

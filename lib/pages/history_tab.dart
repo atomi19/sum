@@ -51,6 +51,81 @@ class _HistoryTabState extends State<HistoryTab>{
     return '';
   }
 
+  // comment showModalBottomSheet
+  void _showCommentSheet(int index) {
+    Navigator.pop(context);
+    widget.commentController.text = widget.history[index]['comment'];
+
+    showModalBottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+        padding: EdgeInsets.only(
+          top: 10,
+          bottom: MediaQuery.of(context).viewInsets.bottom
+        ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // top bar of modal bottom sheet
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary,
+                        width: 1.0,
+                      )
+                    )
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              addComment(widget.history, widget.commentController.text, index);
+                            });
+                            widget.commentController.clear();
+                          },
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Done', style: TextStyle(fontSize: 18)),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                // comment text field
+                TextField(
+                  controller: widget.commentController,
+                  minLines: 10,
+                  maxLines: 20,
+                  cursorColor: Theme.of(context).colorScheme.primary,
+                  decoration: InputDecoration(
+                    hintText: 'Enter comment',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(10),
+                  ),
+                )
+              ],
+            )
+          ),
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -71,9 +146,7 @@ class _HistoryTabState extends State<HistoryTab>{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'History', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
-                ),
+                Text('History', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
                 TextButton(
                   onPressed: () {
                     showDialog(
@@ -192,78 +265,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                     ListTile(
                                       leading: const Icon(Icons.comment_outlined),
                                       title: const Text('Comment'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        widget.commentController.text = widget.history[index]['comment'];
-                                        showModalBottomSheet(
-                                          backgroundColor: Theme.of(context).colorScheme.secondary,
-                                          context: context,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                                          ),
-                                          builder: (BuildContext context) {
-                                            return Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 10,
-                                              bottom: MediaQuery.of(context).viewInsets.bottom
-                                            ),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    // top bar of modal bottom sheet
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          bottom: BorderSide(
-                                                            color: Theme.of(context).colorScheme.secondary,
-                                                            width: 1.0,
-                                                          )
-                                                        )
-                                                      ),
-                                                      child: Padding(
-                                                        padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(context);
-                                                                setState(() {
-                                                                  addComment(widget.history, widget.commentController.text, index);
-                                                                });
-                                                                widget.commentController.clear();
-                                                              },
-                                                              style: TextButton.styleFrom(
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(10),
-                                                                ),
-                                                              ),
-                                                              child: const Text('Done', style: TextStyle(fontSize: 18)),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    // comment text field
-                                                    TextField(
-                                                      controller: widget.commentController,
-                                                      minLines: 10,
-                                                      maxLines: 20,
-                                                      cursorColor: Theme.of(context).colorScheme.primary,
-                                                      decoration: InputDecoration(
-                                                        hintText: 'Enter comment',
-                                                        border: InputBorder.none,
-                                                        contentPadding: EdgeInsets.all(10),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )
-                                              ),
-                                            );
-                                          }
-                                        );
-                                      },
+                                      onTap: () => _showCommentSheet(index),
                                     ),
                                     // delete item in history
                                     ListTile(
