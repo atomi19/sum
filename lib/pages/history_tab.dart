@@ -243,6 +243,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                         widget.switchTab();
                                       },
                                     ),
+                                    Divider(color: Theme.of(context).disabledColor),
                                     ListTile(
                                       leading: const Icon(Icons.copy),
                                       title: const Text('Copy result'),
@@ -261,6 +262,7 @@ class _HistoryTabState extends State<HistoryTab>{
                                         copyToClipboard(data);
                                       },
                                     ),
+                                    Divider(color: Theme.of(context).disabledColor),
                                     // comment item in history
                                     ListTile(
                                       leading: const Icon(Icons.comment_outlined),

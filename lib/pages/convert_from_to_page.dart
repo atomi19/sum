@@ -172,13 +172,14 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
                         ),
                       ),
                       subtitle: Text(
-                        unitResults[units[index]] ?? '0', 
+                        unitResults[units[index]] ?? '0.0', 
                         style: TextStyle(fontWeight: FontWeight.bold)
                       ),
                       onTap: () {
                         setState(() {
                           _selectedCardIndex = index;
                           _selectedUnit = units[index];
+                          onValueChanged();
                         });
                       },
                     )
@@ -215,7 +216,7 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
                               onValueChanged();
                             },
                             decoration: InputDecoration(
-                              hintText: '0',
+                              hintText: '0.0',
                               hintStyle: TextStyle(
                                 color: Theme.of(context).disabledColor
                               ),
