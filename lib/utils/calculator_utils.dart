@@ -68,12 +68,14 @@ Map<String, dynamic> createExpression(List<Map<String,dynamic>> history, String 
     'id': generateId(history),
     'expression': expression,
     'comment': '',
+    'folderId': 0, // 0 - means no folder
   };
 }
 
 // add comment to item in history
-void addComment(List<Map<String,dynamic>> history, String comment, int index) {
-  history[index]['comment'] = comment;
+void addComment(List<Map<String,dynamic>> history, String comment, int itemId) {
+  final item = history.firstWhere((item) => item['id'] == itemId);
+  item['comment'] = comment;
   saveData('history', history);
 }
 
@@ -81,7 +83,6 @@ void addComment(List<Map<String,dynamic>> history, String comment, int index) {
 int generateId(List<Map<String,dynamic>> history) {
   final random = Random();
   int id;
-
 
   // make sure id is unique, and there is no same id in history
   do {
@@ -98,9 +99,15 @@ void addToHistory(List<Map<String,dynamic>> history, String expression) {
 }
 
 // delete one item in history
-void deleteItemInHistory(List<Map<String,dynamic>> history, int index) {
-  history.removeAt(index);
-  saveData('history', history);
+void deleteItem(List<Map<String,dynamic>> history, int itemId, String key) {
+  history.removeWhere((item) => item['id'] == itemId);
+  saveData(key, history);
+}
+
+// change the folder id for an item in history
+void changeItemFolderId(List<Map<String,dynamic>> items, int index, int folderId) {
+  items[index]['folderId'] = folderId;
+  saveData('history', items);
 }
 
 // clear all history

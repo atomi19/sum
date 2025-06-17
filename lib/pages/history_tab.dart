@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sum/pages/folders_page.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
 class HistoryTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
+  final List<Map<String, dynamic>> folders;
   final TextEditingController controller;
   final TextEditingController commentController;
   final void Function() switchTab;
@@ -10,6 +12,7 @@ class HistoryTab extends StatefulWidget {
   const HistoryTab({
     super.key,
     required this.history,
+    required this.folders,
     required this.controller,
     required this.commentController,
     required this.switchTab,
@@ -20,6 +23,18 @@ class HistoryTab extends StatefulWidget {
 }
 
 class _HistoryTabState extends State<HistoryTab>{
+  late List<Map<String, dynamic>> _filteredHistory;
+  int _currentFolderId = 0;
+  String _appTitle = 'All history';
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _filterHistory();
+    });
+  }
+
   // insert expression or expression's result into expression field
   void insertData(String expression, String action) {
     switch (action) {
@@ -52,9 +67,12 @@ class _HistoryTabState extends State<HistoryTab>{
   }
 
   // comment showModalBottomSheet
-  void _showCommentSheet(int index) {
+  void _showCommentSheet(int itemId) {
     Navigator.pop(context);
-    widget.commentController.text = widget.history[index]['comment'];
+    // find item comment and set commentController with this comment
+    final item = widget.history.firstWhere((item) => item['id'] == itemId);
+    String comment = item['comment'];
+    widget.commentController.text = comment;
 
     showModalBottomSheet(
       backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -76,7 +94,7 @@ class _HistoryTabState extends State<HistoryTab>{
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).disabledColor,
                         width: 1.0,
                       )
                     )
@@ -91,7 +109,7 @@ class _HistoryTabState extends State<HistoryTab>{
                           onPressed: () {
                             Navigator.pop(context);
                             setState(() {
-                              addComment(widget.history, widget.commentController.text, index);
+                              addComment(widget.history, widget.commentController.text, itemId);
                             });
                             widget.commentController.clear();
                           },
@@ -126,6 +144,148 @@ class _HistoryTabState extends State<HistoryTab>{
     );
   }
 
+  // clear all history dialog
+  void _showClearHistoryDialog() {
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        title: const Text('Clear history'),
+        content: const Text('It will clear all your history!'),
+        actions:<Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.bodyMedium,
+            ),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              setState(() {
+                clearHistory(widget.history);
+              });
+              Navigator.pop(context);
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              textStyle: Theme.of(context).textTheme.bodyMedium,
+            ),
+            child: const Text('OK'),
+          ),
+        ],
+      )
+    );
+  }
+
+  // change _currentFolderId from folders_page
+  void _changeCurrentFolderId(int id) {
+    _currentFolderId = id;
+    setState(() {      
+      _filterHistory();
+    });
+  }
+
+  // show modalBottomSheet with all folders
+  void _moveToFolderSheet(int itemIndex) {
+    showModalBottomSheet(
+      context: context, 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom
+          ),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).disabledColor,
+                      width: 1.0,
+                    )
+                  )
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Move to folder', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.folder_outlined),
+                title: const Text('All history'),
+                onTap: () {
+                  Navigator.pop(context);
+                  changeItemFolderId(widget.history, itemIndex, 0);
+                },
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.folders.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: const Icon(Icons.folder_outlined),
+                      title: Text(widget.folders[index]['folderName']),
+                      onTap: () {
+                        Navigator.pop(context);
+                        final int selectedFolderId = widget.folders[index]['id'];
+                        changeItemFolderId(widget.history, itemIndex, selectedFolderId);
+                      },
+                    );
+                  }
+                )
+              ),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  void _navigateToFoldersPage() {
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => 
+      FoldersPage(
+        folders: widget.folders, 
+        changeCurrentFolderId: _changeCurrentFolderId,
+        changeAppTitle: _changeAppTitle,
+        )
+      )
+    );
+  }
+
+  // filter history based on _currentFolderId
+  // if _currentFolderId is 0, show all items in history
+  void _filterHistory() {
+    if(_currentFolderId == 0) {
+      _filteredHistory = widget.history;
+    } else {
+      _filteredHistory = widget.history.where((item) => item['folderId'] == _currentFolderId).toList();
+    }
+  }
+
+  // change app title based on folder
+  void _changeAppTitle(String newTitle) {
+    setState(() {
+      _appTitle = newTitle;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -146,46 +306,13 @@ class _HistoryTabState extends State<HistoryTab>{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('History', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
                 TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context, 
-                      builder: (BuildContext context) => AlertDialog(
-                        backgroundColor: Theme.of(context).colorScheme.tertiary,
-                        title: const Text('Clear history'),
-                        content: const Text('It will clear all your history!'),
-                        actions:<Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            style: TextButton.styleFrom(
-                              textStyle: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            child: const Text('Cancel'),
-                          ),
-                          FilledButton(
-                            onPressed: () {
-                              setState(() {
-                                clearHistory(widget.history);
-                              });
-                              Navigator.pop(context);
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              textStyle: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      )
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  onPressed: _navigateToFoldersPage,
+                  child: const Icon(Icons.arrow_left)
+                ),
+                Text(_appTitle, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+                TextButton(
+                  onPressed: _showClearHistoryDialog,
                   child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
                 ),
               ],
@@ -193,105 +320,121 @@ class _HistoryTabState extends State<HistoryTab>{
           ),
           // history list
           Expanded(
-            child: widget.history.isEmpty
-            ? const Center(child: Text('No history available', style: TextStyle(fontSize: 25)))
-            : ListView.builder(
-              itemCount: widget.history.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1))
-                      ),
-                      child: ListTile(
-                        title: Text(widget.history[index]['expression'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20)),
-                        subtitle: widget.history[index]['comment'].toString().trim().isEmpty
-                        ? null
-                        : Text(widget.history[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
-                        onTap: () {
-                          // actions for a selected item in history
-                          showModalBottomSheet(
-                            context: context,
-                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                            ),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Wrap(
-                                  children: [
-                                    // take expression action
-                                    ListTile(
-                                      leading: const Icon(Icons.download),
-                                      title: const Text('Take expression'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        insertData(widget.history[index]['expression'], 'expression');
-                                        widget.switchTab();
-                                      },
-                                    ),
-                                    // take result action
-                                    ListTile(
-                                      leading: const Icon(Icons.download),
-                                      title: const Text('Take result'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        insertData(widget.history[index]['expression'], 'result');
-                                        widget.switchTab();
-                                      },
-                                    ),
-                                    Divider(color: Theme.of(context).disabledColor),
-                                    ListTile(
-                                      leading: const Icon(Icons.copy),
-                                      title: const Text('Copy result'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        String data = splitExpressionAndResult(widget.history[index]['expression'], 'result');
-                                        copyToClipboard(data);
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.copy_all),
-                                      title: const Text('Copy all'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        String data = widget.history[index]['expression'];
-                                        copyToClipboard(data);
-                                      },
-                                    ),
-                                    Divider(color: Theme.of(context).disabledColor),
-                                    // comment item in history
-                                    ListTile(
-                                      leading: const Icon(Icons.comment_outlined),
-                                      title: const Text('Comment'),
-                                      onTap: () => _showCommentSheet(index),
-                                    ),
-                                    // delete item in history
-                                    ListTile(
-                                      leading: const Icon(Icons.delete_outline, color: Colors.red),
-                                      title: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          deleteItemInHistory(widget.history, index);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          );
-                        },
-                      ),
-                    )
-                  ]
-                );
-              }
-            )
+            child: (() {
+              _filterHistory();
+              return _filteredHistory.isEmpty
+              ? const Center(child: Text('No history available', style: TextStyle(fontSize: 25)))
+              : ListView.builder(
+                itemCount: _filteredHistory.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1))
+                        ),
+                        child: ListTile(
+                          title: Text(_filteredHistory[index]['expression'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20)),
+                          subtitle: _filteredHistory[index]['comment'].toString().trim().isEmpty
+                          ? null
+                          : Text(_filteredHistory[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
+                          onTap: () {
+                            // actions for a selected item in history
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+                              ),
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  child: Wrap(
+                                    children: [
+                                      // take expression action
+                                      ListTile(
+                                        leading: const Icon(Icons.download),
+                                        title: const Text('Take expression'),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          insertData(_filteredHistory[index]['expression'], 'expression');
+                                          widget.switchTab();
+                                        },
+                                      ),
+                                      // take result action
+                                      ListTile(
+                                        leading: const Icon(Icons.download),
+                                        title: const Text('Take result'),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          insertData(_filteredHistory[index]['expression'], 'result');
+                                          widget.switchTab();
+                                        },
+                                      ),
+                                      Divider(color: Theme.of(context).disabledColor),
+                                      ListTile(
+                                        leading: const Icon(Icons.copy),
+                                        title: const Text('Copy result'),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
+                                          copyToClipboard(data);
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: const Icon(Icons.copy_all),
+                                        title: const Text('Copy all'),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          String data = _filteredHistory[index]['expression'];
+                                          copyToClipboard(data);
+                                        },
+                                      ),
+                                      Divider(color: Theme.of(context).disabledColor),
+                                      // move to folder 
+                                      ListTile(
+                                        leading: const Icon(Icons.drive_file_move_outline),
+                                        title: const Text('Move to folder'),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _moveToFolderSheet(index);
+                                        },
+                                      ),
+                                      // comment item in history
+                                      ListTile(
+                                        leading: const Icon(Icons.comment_outlined),
+                                        title: const Text('Comment'),
+                                        onTap: () {
+                                          final int itemId = _filteredHistory[index]['id'];
+                                          _showCommentSheet(itemId);
+                                        },
+                                      ),
+                                      // delete item in history
+                                      ListTile(
+                                        leading: const Icon(Icons.delete_outline, color: Colors.red),
+                                        title: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            final int itemId = _filteredHistory[index]['id'];
+                                            deleteItem(widget.history, itemId, 'history');
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            );
+                          },
+                        ),
+                      )
+                    ]
+                  );
+                }
+              );
+            })()
           ),
         ],
       )

@@ -24,6 +24,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0; // current tab index
   List<Map<String,dynamic>> _history = [];
+  List<Map<String, dynamic>> _folders = [];
   final TextEditingController expressionController = TextEditingController();
   final TextEditingController resultController = TextEditingController();
   final TextEditingController commentController = TextEditingController();
@@ -33,7 +34,8 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     _initializeControllers();
     _loadTheme();
-    _loadHistory();
+    _loadData('history');
+    _loadData('folders');
   }
 
   Future<void> _initializeControllers() async {
@@ -67,11 +69,19 @@ class _MainPageState extends State<MainPage> {
 
   }
 
-  // load history from shared_preferences
-  Future<void> _loadHistory() async {
-    final loadedHistory = await loadHistory('history');
+  // load data from shared_preferences
+  Future<void> _loadData(String key) async {
+    final loadedData = await loadHistory(key);
     setState(() {
-      _history = loadedHistory;
+      switch (key) {
+        case 'history':
+          _history = loadedData;   
+          break;
+        case 'folders':
+          _folders = loadedData;
+        default:
+         return;
+      }
     });
   }
 
@@ -98,7 +108,8 @@ class _MainPageState extends State<MainPage> {
       ),
       ConvertTab(),
       HistoryTab(
-        history: _history, 
+        history: _history,
+        folders: _folders,
         controller: expressionController, 
         commentController: commentController,
         switchTab: () => setState(() {_currentIndex = 0;}),
