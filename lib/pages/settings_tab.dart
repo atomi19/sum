@@ -19,7 +19,7 @@ class SettingsTab extends StatefulWidget {
 
 class _SettingsTabState extends State<SettingsTab> {
   final String appName = 'Sum';
-  final String appVersion = '06.06.2025';
+  final String appVersion = '18.06.2025';
 
   Widget _sectionTitle(String title) {
     return Padding(
