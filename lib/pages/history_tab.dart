@@ -154,7 +154,7 @@ class _HistoryTabState extends State<HistoryTab>{
           borderRadius: BorderRadius.circular(10),
         ),
         title: const Text('Clear history'),
-        content: const Text('It will clear all your history!'),
+        content: Text('It will clear all your history in folder "$_appTitle"!'),
         actions:<Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -166,7 +166,10 @@ class _HistoryTabState extends State<HistoryTab>{
           FilledButton(
             onPressed: () {
               setState(() {
-                clearHistory(widget.history);
+                clearHistory(
+                  history: widget.history,
+                  folderId: _currentFolderId,
+                );
               });
               Navigator.pop(context);
             },
@@ -286,6 +289,18 @@ class _HistoryTabState extends State<HistoryTab>{
     });
   }
 
+  Widget _buildActionTile({
+    required Widget leadingIcon,
+    required Widget title,
+    required Function() onTap,
+  }) {
+    return ListTile(
+      leading: leadingIcon,
+      title: title,
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -352,76 +367,46 @@ class _HistoryTabState extends State<HistoryTab>{
                                   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                                   child: Wrap(
                                     children: [
-                                      // take expression action
-                                      ListTile(
-                                        leading: const Icon(Icons.download),
-                                        title: const Text('Take expression'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          insertData(_filteredHistory[index]['expression'], 'expression');
-                                          widget.switchTab();
-                                        },
-                                      ),
-                                      // take result action
-                                      ListTile(
-                                        leading: const Icon(Icons.download),
-                                        title: const Text('Take result'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          insertData(_filteredHistory[index]['expression'], 'result');
-                                          widget.switchTab();
-                                        },
-                                      ),
+                                      // first section
+                                      _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take expression'), onTap: () {
+                                        Navigator.pop(context);
+                                        insertData(_filteredHistory[index]['expression'], 'expression');
+                                        widget.switchTab();
+                                      }),
+                                      _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take result'), onTap: () {
+                                        Navigator.pop(context);
+                                        insertData(_filteredHistory[index]['expression'], 'result');
+                                        widget.switchTab();
+                                      }),
+                                      // second section
                                       Divider(color: Theme.of(context).disabledColor),
-                                      ListTile(
-                                        leading: const Icon(Icons.copy),
-                                        title: const Text('Copy result'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
-                                          copyToClipboard(data);
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: const Icon(Icons.copy_all),
-                                        title: const Text('Copy all'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          String data = _filteredHistory[index]['expression'];
-                                          copyToClipboard(data);
-                                        },
-                                      ),
+                                      _buildActionTile(leadingIcon: Icon(Icons.copy), title: Text('Copy result'), onTap: () {
+                                        Navigator.pop(context);
+                                        String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
+                                        copyToClipboard(data);
+                                      }),
+                                      _buildActionTile(leadingIcon: Icon(Icons.copy_all), title: Text('Copy all'), onTap: () {
+                                        Navigator.pop(context);
+                                        String data = _filteredHistory[index]['expression'];
+                                        copyToClipboard(data);
+                                      }),
+                                      // third section
                                       Divider(color: Theme.of(context).disabledColor),
-                                      // move to folder 
-                                      ListTile(
-                                        leading: const Icon(Icons.drive_file_move_outline),
-                                        title: const Text('Move to folder'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          _moveToFolderSheet(index);
-                                        },
-                                      ),
-                                      // comment item in history
-                                      ListTile(
-                                        leading: const Icon(Icons.comment_outlined),
-                                        title: const Text('Comment'),
-                                        onTap: () {
+                                      _buildActionTile(leadingIcon: Icon(Icons.drive_file_move_outline), title: Text('Move to folder'), onTap: () {
+                                        Navigator.pop(context);
+                                        _moveToFolderSheet(index);
+                                      }),
+                                      _buildActionTile(leadingIcon: Icon(Icons.comment_outlined), title: Text('Comment'), onTap: () {
+                                        final int itemId = _filteredHistory[index]['id'];
+                                        _showCommentSheet(itemId);
+                                      }),
+                                      _buildActionTile(leadingIcon: Icon(Icons.delete_outline, color: Colors.red,), title: Text('Delete', style: TextStyle(color: Colors.red),), onTap: () {
+                                        Navigator.pop(context);
+                                        setState(() {
                                           final int itemId = _filteredHistory[index]['id'];
-                                          _showCommentSheet(itemId);
-                                        },
-                                      ),
-                                      // delete item in history
-                                      ListTile(
-                                        leading: const Icon(Icons.delete_outline, color: Colors.red),
-                                        title: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          setState(() {
-                                            final int itemId = _filteredHistory[index]['id'];
-                                            deleteItem(widget.history, itemId, 'history');
-                                          });
-                                        },
-                                      ),
+                                          deleteItem(widget.history, itemId, 'history');
+                                        });
+                                      }),   
                                     ],
                                   ),
                                 );

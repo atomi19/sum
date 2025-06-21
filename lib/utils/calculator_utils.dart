@@ -63,7 +63,10 @@ String solveExpression({
 }
 
 // new expression item with unique ID, expression itself, and empty comment
-Map<String, dynamic> createExpression(List<Map<String,dynamic>> history, String expression) {
+Map<String, dynamic> createExpression({
+  required List<Map<String,dynamic>> history, 
+  required String expression,
+  }) {
   return {
     'id': generateId(history),
     'expression': expression,
@@ -94,7 +97,10 @@ int generateId(List<Map<String,dynamic>> history) {
 
 // save expression to history variable
 void addToHistory(List<Map<String,dynamic>> history, String expression) {
-  history.add(createExpression(history, expression));
+  history.add(createExpression(
+    history: history, 
+    expression: expression,
+  ));
   saveData('history', history);
 }
 
@@ -111,9 +117,16 @@ void changeItemFolderId(List<Map<String,dynamic>> items, int index, int folderId
 }
 
 // clear all history
-void clearHistory(List<Map<String,dynamic>> history) {
+void clearHistory({
+  required List<Map<String,dynamic>> history, 
+  required int folderId
+  }) {
   if(history.isNotEmpty) {
-    history.clear();
+    if(folderId == 0) {
+      history.clear();
+    } else {
+      history.removeWhere((item) => item['folderId'] == folderId);
+    }
     saveData('history', history);
   }
 }

@@ -20,8 +20,11 @@ class FoldersPage extends StatefulWidget {
 class _FoldersPageState extends State<FoldersPage> {
   final TextEditingController _folderController = TextEditingController();
 
-  // showDialog for creating folder
-  void _createFolderDialog() {
+  void _showFolderDialog({
+    required String title,
+    required String confirmButtonLabel,
+    required Function() onTap,
+  }) {
     showDialog(
       context: context, 
       builder: (context) => AlertDialog(
@@ -31,66 +34,14 @@ class _FoldersPageState extends State<FoldersPage> {
           borderRadius: BorderRadius.circular(10),
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: const Text('Create folder'),
-        content:TextField(
-          controller: _folderController,
-          autofocus: true,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
-            hintText: 'Folder name',
-            hintStyle: TextStyle(
-              color: Theme.of(context).disabledColor
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            }, 
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
-            ),
-            child: const Text('Cancel')
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                addFolder(widget.folders, _folderController.text);
-                _folderController.clear();
-              });
-            },
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
-            ),
-            child: const Text('Create')
-          )
-        ]
-      )
-    );
-  }
-
-  // showDialog for renaming folder
-  void _showRenameDialog(int folderId) {
-    showDialog(
-      context: context, 
-      builder: (context) => AlertDialog(
-        titlePadding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: const Text('Rename folder'),
+        title: Text(title),
         content: TextField(
           controller: _folderController,
           autofocus: true,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
             focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
-            hintText: 'Rename folder',
+            hintText: 'Folder name',
             hintStyle: TextStyle(
               color: Theme.of(context).disabledColor
             ),
@@ -107,15 +58,12 @@ class _FoldersPageState extends State<FoldersPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              setState(() {
-                renameFolder(widget.folders, folderId, _folderController.text);
-              });
-              _folderController.clear();
+              onTap();
             },
             style: TextButton.styleFrom(
               textStyle: Theme.of(context).textTheme.bodyMedium,
             ),
-            child: const Text('OK')
+            child: Text(confirmButtonLabel)
           )
         ],
       )
@@ -183,7 +131,12 @@ class _FoldersPageState extends State<FoldersPage> {
                 title: const Text('Rename'),
                 onTap: () {
                   Navigator.pop(context);
-                  _showRenameDialog(folderId);
+                  _showFolderDialog(title: 'Rename folder', confirmButtonLabel: 'Rename', onTap: () {
+                    setState(() {
+                      renameFolder(widget.folders, folderId, _folderController.text);
+                    });
+                    _folderController.clear();
+                  });
                 },
               ),
               ListTile(
@@ -198,6 +151,27 @@ class _FoldersPageState extends State<FoldersPage> {
           )
         );
       }
+    );
+  }
+
+  Widget _buildFolderCard({
+    int? index,
+    required Function onTap,
+    Function? onLongPress,
+    }) {
+    return Card(
+      color: Theme.of(context).colorScheme.secondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        leading: const Icon(Icons.folder_outlined),
+        title: index != null ? Text(widget.folders[index]['folderName']) : const Text('All history'),
+        onTap: () => onTap(),
+        onLongPress: onLongPress != null ? () => onLongPress() : null,
+      ),
     );
   }
 
@@ -224,29 +198,31 @@ class _FoldersPageState extends State<FoldersPage> {
                 children: [
                   Text('Folders', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
                   TextButton(
-                    onPressed: _createFolderDialog,
+                    onPressed: () => _showFolderDialog(title: 'Create folder', confirmButtonLabel: 'Create', onTap: () {
+                      setState(() {
+                        addFolder(widget.folders, _folderController.text);
+                        _folderController.clear();
+                      });
+                    }),
                     child: const Icon(Icons.create_new_folder_outlined, size: 18)
                   ),
                 ],
               ),
             ),
             // folders
-            ListTile(
-              leading: const Icon(Icons.folder_outlined),
-              title: const Text('All history'),
+            _buildFolderCard(
               onTap: () {
                 Navigator.pop(context);
                 widget.changeAppTitle('All history');
                 widget.changeCurrentFolderId(0);
-              },
+              }
             ),
             Expanded(
               child: ListView.builder(
                 itemCount: widget.folders.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: const Icon(Icons.folder_outlined),
-                    title: Text(widget.folders[index]['folderName']),
+                  return _buildFolderCard(
+                    index: index, 
                     onTap: () {
                       Navigator.pop(context);
                       widget.changeAppTitle(widget.folders[index]['folderName']);
