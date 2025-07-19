@@ -130,6 +130,12 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: SizedBox(
         height: 65,
         child: NavigationBar(
+          indicatorColor: Colors.transparent,
+          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+            (Set<WidgetState> states) {
+              return Colors.transparent;
+            },
+          ),
           selectedIndex: _currentIndex,
           onDestinationSelected: (index) => setState(() => _currentIndex = index),
           destinations: <Widget>[

@@ -25,7 +25,7 @@ class HistoryTab extends StatefulWidget {
 class _HistoryTabState extends State<HistoryTab>{
   late List<Map<String, dynamic>> _filteredHistory;
   int _currentFolderId = 0;
-  String _appTitle = 'All history';
+  String _appTitle = 'All History';
 
   @override
   void initState() {
@@ -154,7 +154,7 @@ class _HistoryTabState extends State<HistoryTab>{
           borderRadius: BorderRadius.circular(10),
         ),
         title: const Text('Clear history'),
-        content: Text('It will clear all your history in folder "$_appTitle"!'),
+        content: Text('It will clear all your history in folder $_appTitle'),
         actions:<Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -230,7 +230,7 @@ class _HistoryTabState extends State<HistoryTab>{
               ),
               ListTile(
                 leading: const Icon(Icons.folder_outlined),
-                title: const Text('All history'),
+                title: const Text('All History'),
                 onTap: () {
                   Navigator.pop(context);
                   changeItemFolderId(widget.history, itemIndex, 0);
@@ -318,20 +318,25 @@ class _HistoryTabState extends State<HistoryTab>{
               )
             ),
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TextButton(
-                  onPressed: _navigateToFoldersPage,
-                  child: const Icon(Icons.arrow_left)
-                ),
-                Text(_appTitle, style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
-                TextButton(
-                  onPressed: _showClearHistoryDialog,
-                  child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: _navigateToFoldersPage,
+                      child: Icon(Icons.keyboard_arrow_left, size: 25)
+                    ),
+                    Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+                    TextButton(
+                      onPressed: _showClearHistoryDialog,
+                      child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
+                    ),
+                  ],
                 ),
               ],
-            ),
+            )
           ),
           // history list
           Expanded(

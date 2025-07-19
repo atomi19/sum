@@ -26,7 +26,7 @@ class _ConvertTabState extends State<ConvertTab> {
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: ListTile(
-        leading: Icon(icon),
+        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
         title: Text(title),
         onTap: () => onTap(),
       ),
@@ -40,28 +40,21 @@ class _ConvertTabState extends State<ConvertTab> {
         children: [
           // top bar (or app bar)
           Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1.0,
-                )
-              )
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Convert', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),),
+                Text('Convert', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           ),
           // section with unit categories (e.g length, temperature, etc.)
           Expanded(
             child: ListView(
+              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
               children: [
                 _createUnitSection(context, Icons.storage_outlined, 'Data', () => _navigateToConvertFromToPage('Data')),
-                _createUnitSection(context, Icons.straighten, 'Length', () => _navigateToConvertFromToPage('Length')),
+                _createUnitSection(context, Icons.straighten_outlined, 'Length', () => _navigateToConvertFromToPage('Length')),
                 _createUnitSection(context, Icons.bolt_outlined, 'Power', () => _navigateToConvertFromToPage('Power')),
                 _createUnitSection(context, Icons.thermostat_outlined, 'Temperature', () => _navigateToConvertFromToPage('Temperature')),
                 _createUnitSection(context, Icons.schedule_outlined, 'Time', () => _navigateToConvertFromToPage('Time')),

@@ -162,25 +162,17 @@ class _SettingsTabState extends State<SettingsTab> {
         children: [
           // top bar
           Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1.0,
-                )
-              )
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Settings', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),),
+                Text('Settings', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),),
               ],
             ),
           ),
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
               children: [
                 // appearance section
                 _sectionTitle('Appearance'),

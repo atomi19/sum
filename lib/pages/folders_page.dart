@@ -168,7 +168,7 @@ class _FoldersPageState extends State<FoldersPage> {
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         leading: const Icon(Icons.folder_outlined),
-        title: index != null ? Text(widget.folders[index]['folderName']) : const Text('All history'),
+        title: index != null ? Text(widget.folders[index]['folderName']) : const Text('All History'),
         onTap: () => onTap(),
         onLongPress: onLongPress != null ? () => onLongPress() : null,
       ),
@@ -213,7 +213,7 @@ class _FoldersPageState extends State<FoldersPage> {
             _buildFolderCard(
               onTap: () {
                 Navigator.pop(context);
-                widget.changeAppTitle('All history');
+                widget.changeAppTitle('All History');
                 widget.changeCurrentFolderId(0);
               }
             ),

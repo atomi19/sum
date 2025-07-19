@@ -37,8 +37,7 @@ class _MainTabState extends State<MainTab>{
     return SafeArea(
       child: Column(
         children: [
-          // expression text field
-          // with content padding in percents
+          // text field's
           Builder(
             builder: (context) {
               final screenHeight = MediaQuery.of(context).size.height;
@@ -49,6 +48,7 @@ class _MainTabState extends State<MainTab>{
                 padding: EdgeInsets.fromLTRB(5, topPadding, 5, bottomPadding),
                 child: Column(
                   children: [
+                    // result text field
                     TextField(
                       controller: widget.resultController,
                       readOnly: true,
@@ -98,10 +98,18 @@ class _MainTabState extends State<MainTab>{
                         }
                       },
                     ),
+                    // expression text field
                     TextField(
                       autofocus: true,
                       controller: widget.expressionController,
                       textAlign: TextAlign.end,
+                      onSubmitted: (String value) => processExpressionResult(
+                        resultController: widget.resultController, 
+                        expressionController: widget.expressionController, 
+                        expression: widget.expressionController.text, 
+                        history: widget.history, 
+                        isAddingToHistory: true
+                      ),
                       keyboardType: TextInputType.none,
                       cursorColor: Theme.of(context).colorScheme.primary,
                       style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
