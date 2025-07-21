@@ -65,7 +65,9 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: const Text('Light'),
                 onTap: () {
                   Navigator.pop(context);
-                  widget.toggleLightTheme();
+                  setState(() {
+                    widget.toggleLightTheme();
+                  });
                 },
               ),
               ListTile(
@@ -73,7 +75,9 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: const Text('Dark'),
                 onTap: () {
                   Navigator.pop(context);
-                  widget.toggleDarkTheme();
+                  setState(() {
+                    widget.toggleDarkTheme();
+                  });
                 },
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sum/pages/folders_page.dart';
 import 'package:sum/utils/calculator_utils.dart';
+import 'package:sum/widgets/top_bar.dart';
 
 class HistoryTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
@@ -32,6 +33,7 @@ class _HistoryTabState extends State<HistoryTab>{
     super.initState();
     setState(() {
       _filterHistory();
+
     });
   }
 
@@ -104,6 +106,7 @@ class _HistoryTabState extends State<HistoryTab>{
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        SizedBox(width: 48),
                         const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         TextButton(
                           onPressed: () {
@@ -174,7 +177,7 @@ class _HistoryTabState extends State<HistoryTab>{
               Navigator.pop(context);
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.redAccent,
+              backgroundColor: Colors.red[700],
               foregroundColor: Colors.white,
               textStyle: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -306,34 +309,20 @@ class _HistoryTabState extends State<HistoryTab>{
     return SafeArea(
       child: Column(
         children: [
-          // app bar
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1.0,
-                )
-              )
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+          // top bar
+          topBar(
+            context: context, 
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: _navigateToFoldersPage,
-                      child: Icon(Icons.keyboard_arrow_left, size: 25)
-                    ),
-                    Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
-                    TextButton(
-                      onPressed: _showClearHistoryDialog,
-                      child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
-                    ),
-                  ],
+                TextButton(
+                  onPressed: _navigateToFoldersPage,
+                  child: Icon(Icons.keyboard_arrow_left, size: 25)
+                ),
+                Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+                TextButton(
+                  onPressed: _showClearHistoryDialog,
+                  child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
                 ),
               ],
             )

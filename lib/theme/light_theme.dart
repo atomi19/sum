@@ -5,7 +5,7 @@ ThemeData lightTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: Colors.black,
-      backgroundColor: Colors.grey.shade300,
+      backgroundColor: Colors.grey.shade200,
       textStyle: const TextStyle(fontSize: 25,),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10)

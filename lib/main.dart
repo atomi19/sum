@@ -16,18 +16,29 @@ class MainApp extends StatefulWidget {
 }
 
 class MainAppState extends State<MainApp> {
-  ThemeMode _themeMode = ThemeMode.light;
+  ThemeMode themeMode = ThemeMode.light;
+
+  // load theme 
+  Future<void> _loadTheme() async {
+    final String? theme = await loadData('theme_mode');
+
+    if(theme == 'light') {
+      _toggleLightTheme();
+    } else {
+      _toggleDarkTheme();
+    } 
+  }
 
   void _toggleLightTheme() {
     setState(() {
-      _themeMode = ThemeMode.light;
+      themeMode = ThemeMode.light;
       saveData('theme_mode', 'light');
     });
   }
 
   void _toggleDarkTheme() {
     setState(() {
-      _themeMode = ThemeMode.dark;
+      themeMode = ThemeMode.dark;
       saveData('theme_mode', 'dark');
     });
   }
@@ -39,11 +50,12 @@ class MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: _themeMode,
+      themeMode: themeMode,
       home: MainPage(
+        loadTheme: _loadTheme,
         toggleLightTheme: _toggleLightTheme,
         toggleDarkTheme: _toggleDarkTheme,
-        themeMode: _themeMode,
+        themeMode: themeMode,
       )
     );
   }

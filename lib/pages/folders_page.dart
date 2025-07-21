@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/folder_management.dart';
+import 'package:sum/widgets/top_bar.dart';
 
 class FoldersPage extends StatefulWidget {
   final List<Map<String, dynamic>> folders;
@@ -181,21 +182,13 @@ class _FoldersPageState extends State<FoldersPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // app bar
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1.0,
-                  )
-                )
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            // top bar
+            topBar(
+              context: context, 
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  SizedBox(width: 48),
                   Text('Folders', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
                   TextButton(
                     onPressed: () => _showFolderDialog(title: 'Create folder', confirmButtonLabel: 'Create', onTap: () {
@@ -207,33 +200,39 @@ class _FoldersPageState extends State<FoldersPage> {
                     child: const Icon(Icons.create_new_folder_outlined, size: 18)
                   ),
                 ],
-              ),
+              )
             ),
             // folders
-            _buildFolderCard(
-              onTap: () {
-                Navigator.pop(context);
-                widget.changeAppTitle('All History');
-                widget.changeCurrentFolderId(0);
-              }
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 0),       
+              child: _buildFolderCard(
+                onTap: () {
+                  Navigator.pop(context);
+                  widget.changeAppTitle('All History');
+                  widget.changeCurrentFolderId(0);
+                }
+              ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: widget.folders.length,
-                itemBuilder: (context, index) {
-                  return _buildFolderCard(
-                    index: index, 
-                    onTap: () {
-                      Navigator.pop(context);
-                      widget.changeAppTitle(widget.folders[index]['folderName']);
-                      widget.changeCurrentFolderId(widget.folders[index]['id']);
-                    },
-                    onLongPress: () {
-                      final folderId = widget.folders[index]['id'];
-                      _showMoreFoldersSheet(folderId);
-                    }
-                  );
-                }
+              child: Container(   
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 5),       
+                child: ListView.builder(
+                  itemCount: widget.folders.length,
+                  itemBuilder: (context, index) {
+                    return _buildFolderCard(
+                      index: index, 
+                      onTap: () {
+                        Navigator.pop(context);
+                        widget.changeAppTitle(widget.folders[index]['folderName']);
+                        widget.changeCurrentFolderId(widget.folders[index]['id']);
+                      },
+                      onLongPress: () {
+                        final folderId = widget.folders[index]['id'];
+                        _showMoreFoldersSheet(folderId);
+                      }
+                    );
+                  }
+                )
               )
             )
           ],

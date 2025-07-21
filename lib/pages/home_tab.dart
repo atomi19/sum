@@ -19,7 +19,7 @@ class MainTab extends StatefulWidget {
     required this.switchTab,
     required this.toggleLightTheme,
     required this.toggleDarkTheme,
-    required this.themeMode
+    required this.themeMode,
   });
 
   @override
@@ -108,7 +108,7 @@ class _MainTabState extends State<MainTab>{
                         expressionController: widget.expressionController, 
                         expression: widget.expressionController.text, 
                         history: widget.history, 
-                        isAddingToHistory: true
+                        isAddingToHistory: true,
                       ),
                       keyboardType: TextInputType.none,
                       cursorColor: Theme.of(context).colorScheme.primary,
@@ -162,7 +162,7 @@ class _MainTabState extends State<MainTab>{
                 expression: widget.expressionController.text, 
                 history: widget.history, 
                 isAddingToHistory: true,
-              )
+              ),
             )
           ]),
           const SizedBox(height: 5),

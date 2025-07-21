@@ -6,12 +6,14 @@ import 'package:sum/pages/settings_tab.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
 class MainPage extends StatefulWidget {
+  final VoidCallback loadTheme;
   final VoidCallback toggleLightTheme;
   final VoidCallback toggleDarkTheme;
   final ThemeMode themeMode;
 
   const MainPage({
     super.key,
+    required this.loadTheme,
     required this.toggleLightTheme,
     required this.toggleDarkTheme,
     required this.themeMode,
@@ -33,7 +35,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _initializeControllers();
-    _loadTheme();
+    widget.loadTheme();
     _loadData('history');
     _loadData('folders');
   }
@@ -49,24 +51,10 @@ class _MainPageState extends State<MainPage> {
         resultController: resultController, 
         expressionController: expressionController, 
         expression: expression, 
-        history: _history, 
+        history: _history,
         isAddingToHistory: false,
       );
     });
-  }
-
-  // load string from shared_preferences
-  Future<void> _loadTheme() async {
-    final String? loadedData = await loadData('theme_mode');
-
-    setState(() {
-      if(loadedData == 'light') {
-        widget.toggleLightTheme();
-      } else {
-        widget.toggleDarkTheme();
-      }
-    });
-
   }
 
   // load data from shared_preferences

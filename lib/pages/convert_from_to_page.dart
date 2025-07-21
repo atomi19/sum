@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sum/utils/convert_utils.dart';
 import 'package:sum/widgets/calc_widgets.dart';
 import 'package:sum/utils/calculator_utils.dart';
+import 'package:sum/widgets/top_bar.dart';
 
 class ConvertFromToPage extends StatefulWidget {
   final String conversionType;
@@ -141,12 +142,24 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
     final units = _getSelectedUnits();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.conversionType),
-      ),
       body: SafeArea(
         child: Column(
           children: [
+            // top bar
+            topBar(
+              context: context, 
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Icon(Icons.keyboard_arrow_left, size: 25)
+                  ),
+                  Text(widget.conversionType, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+                  SizedBox(width: 48),
+                ],
+              ),
+            ),
             // conversion units
             Expanded(              
               child: ListView.builder(
@@ -190,7 +203,7 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))
                 ),
                 child: Column(
