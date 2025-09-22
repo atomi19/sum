@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/convert_utils.dart';
+import 'package:sum/widgets/build_button.dart';
 import 'package:sum/widgets/calc_widgets.dart';
 import 'package:sum/utils/calculator_utils.dart';
 import 'package:sum/widgets/top_bar.dart';
@@ -151,14 +152,17 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Icon(Icons.keyboard_arrow_left, size: 25)
+                  buildIconButton(
+                    context: context, 
+                    onTap: () => Navigator.pop(context),
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.arrow_back
                   ),
                   Text(widget.conversionType, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
                   SizedBox(width: 48),
                 ],
               ),
+              bgColor: Theme.of(context).colorScheme.surface,
             ),
             // conversion units
             Expanded(              
@@ -229,6 +233,7 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
                               onValueChanged();
                             },
                             decoration: InputDecoration(
+                              filled: false,
                               hintText: '0.0',
                               hintStyle: TextStyle(
                                 color: Theme.of(context).disabledColor

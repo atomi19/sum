@@ -17,7 +17,12 @@ class _ConvertTabState extends State<ConvertTab> {
   }
 
   // create section with specific unit category(e.g. length, time, etc.)
-  Widget _createUnitSection(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+  Widget _createUnitSection(
+    BuildContext context,
+    IconData icon,
+    String title,
+    VoidCallback onTap,
+  ) {
     return Card(
       color: Theme.of(context).colorScheme.secondary,
       shape: RoundedRectangleBorder(
@@ -29,6 +34,7 @@ class _ConvertTabState extends State<ConvertTab> {
         leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
         title: Text(title),
         onTap: () => onTap(),
+        trailing: const Icon(Icons.arrow_right_rounded),
       ),
     );
   }
@@ -61,7 +67,7 @@ class _ConvertTabState extends State<ConvertTab> {
                 _createUnitSection(context, Icons.fitness_center_outlined, 'Weight', () => _navigateToConvertFromToPage('Weight')),
               ],
             )
-          ),
+          )
         ],
       ),
     );

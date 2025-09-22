@@ -29,6 +29,10 @@ ThemeData lightTheme = ThemeData(
       ),
     )
   ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.white,
+  ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: Colors.blue.shade200,
   ),
@@ -43,5 +47,6 @@ ThemeData lightTheme = ThemeData(
     surface: Colors.white,
     primary: Colors.black,
     secondary: Colors.grey.shade200,
+    shadow: const Color.fromARGB(26, 0, 0, 0),
   )
 );

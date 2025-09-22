@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sum/pages/main_page.dart';
+import 'package:sum/pages/tab_page.dart';
 import 'package:sum/theme/dark_theme.dart';
 import 'package:sum/theme/light_theme.dart';
 import 'package:sum/utils/calculator_utils.dart';
@@ -51,7 +51,7 @@ class MainAppState extends State<MainApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
-      home: MainPage(
+      home: TabPage(
         loadTheme: _loadTheme,
         toggleLightTheme: _toggleLightTheme,
         toggleDarkTheme: _toggleDarkTheme,

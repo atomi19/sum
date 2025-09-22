@@ -56,6 +56,7 @@ class _MainTabState extends State<MainTab>{
                       textAlign: TextAlign.end,
                       style: const TextStyle(fontSize: 50, ),
                       decoration: InputDecoration(
+                        filled: false,
                         border: InputBorder.none,
                       ),
                       onTap: () {
@@ -112,8 +113,9 @@ class _MainTabState extends State<MainTab>{
                       ),
                       keyboardType: TextInputType.none,
                       cursorColor: Theme.of(context).colorScheme.primary,
-                      style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontSize: 25),
                       decoration: InputDecoration(
+                        filled: false,
                         border: InputBorder.none,
                       ),
                     )

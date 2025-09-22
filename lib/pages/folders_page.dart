@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/folder_management.dart';
+import 'package:sum/widgets/build_button.dart';
 import 'package:sum/widgets/top_bar.dart';
 
 class FoldersPage extends StatefulWidget {
@@ -40,8 +41,12 @@ class _FoldersPageState extends State<FoldersPage> {
           controller: _folderController,
           autofocus: true,
           decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 1, color: Theme.of(context).disabledColor)),
+            fillColor: Theme.of(context).colorScheme.surface,
+            hoverColor: Colors.transparent,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none
+            ),
             hintText: 'Folder name',
             hintStyle: TextStyle(
               color: Theme.of(context).disabledColor
@@ -161,10 +166,8 @@ class _FoldersPageState extends State<FoldersPage> {
     Function? onLongPress,
     }) {
     return Card(
+      margin: EdgeInsets.only(bottom: 5),
       color: Theme.of(context).colorScheme.secondary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: ListTile(
@@ -190,21 +193,30 @@ class _FoldersPageState extends State<FoldersPage> {
                 children: [
                   SizedBox(width: 48),
                   Text('Folders', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
-                  TextButton(
-                    onPressed: () => _showFolderDialog(title: 'Create folder', confirmButtonLabel: 'Create', onTap: () {
-                      setState(() {
-                        addFolder(widget.folders, _folderController.text);
-                        _folderController.clear();
-                      });
-                    }),
-                    child: const Icon(Icons.create_new_folder_outlined, size: 18)
-                  ),
+                  buildIconButton(
+                    context: context, 
+                    onTap: () {
+                      _showFolderDialog(
+                        title: 'Create Folder', 
+                        confirmButtonLabel: 'Create', 
+                        onTap: () {
+                          setState(() {
+                            addFolder(widget.folders, _folderController.text);
+                            _folderController.clear();
+                          });
+                        }
+                      );
+                    },
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.create_new_folder_outlined
+                  )
                 ],
-              )
+              ),
+              bgColor: Theme.of(context).colorScheme.surface
             ),
             // folders
             Container(
-              padding: EdgeInsets.fromLTRB(10, 5, 10, 0),       
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 0),      
               child: _buildFolderCard(
                 onTap: () {
                   Navigator.pop(context);
@@ -214,8 +226,8 @@ class _FoldersPageState extends State<FoldersPage> {
               ),
             ),
             Expanded(
-              child: Container(   
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 5),       
+              child: Container(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
                 child: ListView.builder(
                   itemCount: widget.folders.length,
                   itemBuilder: (context, index) {

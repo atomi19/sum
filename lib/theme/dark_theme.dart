@@ -29,6 +29,10 @@ ThemeData darkTheme = ThemeData(
       ),
     )
   ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.transparent,
+  ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: Colors.blue.shade800,
   ),
@@ -43,5 +47,6 @@ ThemeData darkTheme = ThemeData(
     surface: Colors.black,
     primary: Colors.white,
     secondary: Colors.grey.shade900,
+    shadow: Color.fromARGB(166, 131, 131, 131)
   )
 );

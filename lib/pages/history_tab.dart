@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sum/pages/folders_page.dart';
 import 'package:sum/utils/calculator_utils.dart';
+import 'package:sum/widgets/build_button.dart';
 import 'package:sum/widgets/top_bar.dart';
 
 class HistoryTab extends StatefulWidget {
@@ -33,7 +34,6 @@ class _HistoryTabState extends State<HistoryTab>{
     super.initState();
     setState(() {
       _filterHistory();
-
     });
   }
 
@@ -91,41 +91,39 @@ class _HistoryTabState extends State<HistoryTab>{
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // top bar of modal bottom sheet
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Theme.of(context).disabledColor,
-                        width: 1.0,
+                // top bar of comment modalBottomSheet
+                topBar(
+                  context: context, 
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // close button
+                      buildIconButton(
+                        context: context, 
+                        onTap: () { 
+                          Navigator.pop(context);
+                          widget.commentController.clear();
+                        },
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: Icons.close
+                      ),
+                      const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      // done button
+                      buildIconButton(
+                        context: context, 
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            addComment(widget.history, widget.commentController.text, itemId);
+                          });
+                          widget.commentController.clear();
+                        },
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: Icons.check
                       )
-                    )
+                    ],
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(width: 48),
-                        const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            setState(() {
-                              addComment(widget.history, widget.commentController.text, itemId);
-                            });
-                            widget.commentController.clear();
-                          },
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text('Done', style: TextStyle(fontSize: 18)),
-                        )
-                      ],
-                    ),
-                  ),
+                  bgColor: Colors.transparent
                 ),
                 // comment text field
                 TextField(
@@ -137,6 +135,7 @@ class _HistoryTabState extends State<HistoryTab>{
                     hintText: 'Enter comment',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(10),
+                    hoverColor: Colors.transparent
                   ),
                 )
               ],
@@ -315,17 +314,24 @@ class _HistoryTabState extends State<HistoryTab>{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: _navigateToFoldersPage,
-                  child: Icon(Icons.keyboard_arrow_left, size: 25)
+                // back button
+                buildIconButton(
+                  context: context, 
+                  onTap: _navigateToFoldersPage, 
+                  color: Theme.of(context).colorScheme.primary,
+                  icon: Icons.arrow_back
                 ),
                 Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
-                TextButton(
-                  onPressed: _showClearHistoryDialog,
-                  child: const Icon(Icons.delete_outline, color: Colors.red, size: 18,)
-                ),
+                // clear history button
+                buildIconButton(
+                  context: context, 
+                  onTap: _showClearHistoryDialog,
+                  color: Colors.red,
+                  icon: Icons.delete_outline
+                )
               ],
-            )
+            ),
+            bgColor: Theme.of(context).colorScheme.surface
           ),
           // history list
           Expanded(

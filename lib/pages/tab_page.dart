@@ -5,13 +5,13 @@ import 'package:sum/pages/convert_tab.dart';
 import 'package:sum/pages/settings_tab.dart';
 import 'package:sum/utils/calculator_utils.dart';
 
-class MainPage extends StatefulWidget {
+class TabPage extends StatefulWidget {
   final VoidCallback loadTheme;
   final VoidCallback toggleLightTheme;
   final VoidCallback toggleDarkTheme;
   final ThemeMode themeMode;
 
-  const MainPage({
+  const TabPage({
     super.key,
     required this.loadTheme,
     required this.toggleLightTheme,
@@ -20,10 +20,10 @@ class MainPage extends StatefulWidget {
   });
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<TabPage> createState() => _TabPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _TabPageState extends State<TabPage> {
   int _currentIndex = 0; // current tab index
   List<Map<String,dynamic>> _history = [];
   List<Map<String, dynamic>> _folders = [];
