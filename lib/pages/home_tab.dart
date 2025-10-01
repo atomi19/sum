@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/calculator_utils.dart';
 import 'package:sum/widgets/calc_widgets.dart';
+import 'package:sum/widgets/show_bottom_sheet.dart';
 
 class MainTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
@@ -32,6 +33,35 @@ class _MainTabState extends State<MainTab>{
     widget.expressionController.text += value;
   }
 
+  // copy result options 
+  void _showCopyBottomSheet() {
+    showCustomBottomSheet(
+      context: context, 
+      child: Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.content_copy),
+            title: const Text('Copy result'),
+            onTap: () {
+              Navigator.pop(context);
+              String data = widget.resultController.text.split(' ')[1];
+              copyToClipboard(data);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.copy_all),
+            title: const Text('Copy all'),
+            onTap: () {
+              Navigator.pop(context);
+              String data = '${widget.expressionController.text} ${widget.resultController.text}';
+              copyToClipboard(data);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -61,41 +91,7 @@ class _MainTabState extends State<MainTab>{
                       ),
                       onTap: () {
                         if(widget.resultController.text.trim().isNotEmpty) {
-                          showModalBottomSheet(
-                            context: context,
-                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                            ),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Wrap(
-                                  children: [
-                                    ListTile(
-                                      leading: const Icon(Icons.content_copy),
-                                      title: const Text('Copy result'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        String data = widget.resultController.text.split(' ')[1];
-                                        copyToClipboard(data);
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.copy_all),
-                                      title: const Text('Copy all'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        String data = '${widget.expressionController.text} ${widget.resultController.text}';
-                                        copyToClipboard(data);
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                          );
+                          _showCopyBottomSheet();
                         }
                       },
                     ),

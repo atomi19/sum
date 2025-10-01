@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sum/utils/folder_management.dart';
 import 'package:sum/widgets/build_button.dart';
+import 'package:sum/widgets/show_alert_dialog.dart';
+import 'package:sum/widgets/show_bottom_sheet.dart';
 import 'package:sum/widgets/top_bar.dart';
 
 class FoldersPage extends StatefulWidget {
@@ -27,136 +29,140 @@ class _FoldersPageState extends State<FoldersPage> {
     required String confirmButtonLabel,
     required Function() onTap,
   }) {
-    showDialog(
-      context: context, 
-      builder: (context) => AlertDialog(
-        titlePadding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: Text(title),
-        content: TextField(
-          controller: _folderController,
-          autofocus: true,
-          decoration: InputDecoration(
-            fillColor: Theme.of(context).colorScheme.surface,
-            hoverColor: Colors.transparent,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none
-            ),
-            hintText: 'Folder name',
-            hintStyle: TextStyle(
-              color: Theme.of(context).disabledColor
-            ),
+    showAlertDialog(
+      context: context,
+      title: title, 
+      content: TextField(
+        controller: _folderController,
+        autofocus: true,
+        decoration: InputDecoration(
+          fillColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).disabledColor,
+              width: 1
+            )
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).disabledColor,
+              width: 1
+            )
+          ),
+          hintText: 'Folder Name',
+          hintStyle: TextStyle(
+            color: Theme.of(context).disabledColor
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
+      ), 
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(25),
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+                child: const Text('Cancel')
+              ),
             ),
-            child: const Text('Cancel')
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onTap();
-            },
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
+            SizedBox(width: 10),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onTap();
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(25),
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+                child: Text(confirmButtonLabel)
+              )
             ),
-            child: Text(confirmButtonLabel)
-          )
-        ],
-      )
+          ],
+        )
+      ]
     );
   }
 
   // showFolder for deleting folder 
   void _showDeleteFolderDialog(int folderId) {
-    showDialog(
-      context: context, 
-      builder: (context) => AlertDialog(
-        titlePadding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-        contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: const Text('Delete folder'),
-        content: const Text('The folder will be deleted, but its items will stay in "All history"'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
+    showAlertDialog(
+      context: context,
+      title: 'Delete Folder',
+      content: const Text('The folder will be deleted, but its items will remain in All History'),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () => Navigator.pop(context), 
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(25),
+                  textStyle: Theme.of(context).textTheme.bodyMedium
+                ),
+                child: const Text('Cancel')
+              ),
             ),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                deleteFolder(widget.folders, folderId);
-              });
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              textStyle: Theme.of(context).textTheme.bodyMedium,
+            SizedBox(width: 10),
+            Expanded( 
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    deleteFolder(widget.folders, folderId);
+                  });
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(25),
+                  textStyle: Theme.of(context).textTheme.bodyMedium
+                ),
+                child: const Text('Delete', style: TextStyle(color: Colors.red))
+              )
             ),
-            child: const Text('OK'),
-          ),
-        ],
-      )
+          ],
+        )
+      ]
     );
   }
 
   // show action for folder (rename, delete)
   void _showMoreFoldersSheet(int folderId) {
-    showModalBottomSheet(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+    showCustomBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: MediaQuery.of(context).viewInsets.bottom
+      child: Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.drive_file_rename_outline),
+            title: const Text('Rename'),
+            onTap: () {
+              Navigator.pop(context);
+              _showFolderDialog(title: 'Rename Folder', confirmButtonLabel: 'Rename', onTap: () {
+                setState(() {
+                  renameFolder(widget.folders, folderId, _folderController.text);
+                });
+                _folderController.clear();
+              });
+            },
           ),
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.drive_file_rename_outline),
-                title: const Text('Rename'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showFolderDialog(title: 'Rename folder', confirmButtonLabel: 'Rename', onTap: () {
-                    setState(() {
-                      renameFolder(widget.folders, folderId, _folderController.text);
-                    });
-                    _folderController.clear();
-                  });
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.folder_off_outlined, color: Colors.red),
-                title: const Text('Delete folder', style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showDeleteFolderDialog(folderId);
-                },
-              ),
-            ],
-          )
-        );
-      }
+          ListTile(
+            leading: const Icon(Icons.folder_off_outlined, color: Colors.red),
+            title: const Text('Delete folder', style: TextStyle(color: Colors.red)),
+            onTap: () {
+              Navigator.pop(context);
+              _showDeleteFolderDialog(folderId);
+            },
+          ),
+        ],
+      )
     );
   }
 
@@ -212,7 +218,6 @@ class _FoldersPageState extends State<FoldersPage> {
                   )
                 ],
               ),
-              bgColor: Theme.of(context).colorScheme.surface
             ),
             // folders
             Container(

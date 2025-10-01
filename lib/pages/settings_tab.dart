@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sum/widgets/show_alert_dialog.dart';
+import 'package:sum/widgets/show_bottom_sheet.dart';
 
 class SettingsTab extends StatefulWidget {
   final VoidCallback toggleLightTheme;
@@ -49,76 +51,61 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   void _showThemePicker() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.light_mode_outlined),
-                title: const Text('Light'),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    widget.toggleLightTheme();
-                  });
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.dark_mode_outlined),
-                title: const Text('Dark'),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    widget.toggleDarkTheme();
-                  });
-                },
-              ),
-            ],
+    showCustomBottomSheet(
+      context: context, 
+      child: Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.light_mode_outlined),
+            title: const Text('Light'),
+            onTap: () {
+              Navigator.pop(context);
+              setState(() {
+                widget.toggleLightTheme();
+              });
+            },
           ),
-        );
-      }
+          ListTile(
+            leading: const Icon(Icons.dark_mode_outlined),
+            title: const Text('Dark'),
+            onTap: () {
+              Navigator.pop(context);
+              setState(() {
+                widget.toggleDarkTheme();
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
   
   void _showLicencesDialog() {
     Navigator.pop(context);
     
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('App license'),
-              subtitle: const SelectableText('https://github.com/atomi19/sum/blob/main/LICENSE.txt'),
-            ),
-            ListTile(
-              title: const Text('Third-party licenses'),
-              trailing: const Icon(Icons.arrow_right),
-              onTap: () {
-                showLicensePage(
-                  context: context,
-                  applicationName: appName,
-                  applicationVersion: appVersion,
-                );
-              },
-            ),
-          ],
-        ), 
-      )
+    showAlertDialog(
+      context: context, 
+      contentPadding: EdgeInsets.all(10),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('App license'),
+            subtitle: const SelectableText('https://github.com/atomi19/sum/blob/main/LICENSE.txt'),
+          ),
+          ListTile(
+            title: const Text('Third-party licenses'),
+            trailing: const Icon(Icons.arrow_right),
+            onTap: () {
+              showLicensePage(
+                context: context,
+                applicationName: appName,
+                applicationVersion: appVersion,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -138,24 +125,18 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   void _showAboutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildAboutSection(title: 'Name', trailing: Text(appName, style: TextStyle(fontSize: 15))),
-            _buildAboutSection(title: 'Version', trailing: Text(appVersion, style: TextStyle(fontSize: 15))),
-            _buildAboutSection(title: 'Made by', subtitle: 'https://github.com/atomi19', trailing: Text('atomi19', style: TextStyle(fontSize: 15))),
-            _buildAboutSection(title: 'Licenses', trailing: Icon(Icons.arrow_right), onTap: _showLicencesDialog),
-          ],
-        ),
-      )
+    showAlertDialog(
+      context: context, 
+      contentPadding: EdgeInsets.all(10),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildAboutSection(title: 'Name', trailing: Text(appName, style: TextStyle(fontSize: 15))),
+          _buildAboutSection(title: 'Version', trailing: Text(appVersion, style: TextStyle(fontSize: 15))),
+          _buildAboutSection(title: 'Made by', subtitle: 'https://github.com/atomi19', trailing: Text('atomi19', style: TextStyle(fontSize: 15))),
+          _buildAboutSection(title: 'Licenses', trailing: Icon(Icons.arrow_right), onTap: _showLicencesDialog),
+        ],
+      ),
     );
   }
 

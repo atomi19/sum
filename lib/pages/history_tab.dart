@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sum/pages/folders_page.dart';
 import 'package:sum/utils/calculator_utils.dart';
 import 'package:sum/widgets/build_button.dart';
+import 'package:sum/widgets/show_alert_dialog.dart';
 import 'package:sum/widgets/top_bar.dart';
+import 'package:sum/widgets/show_bottom_sheet.dart';
 
 class HistoryTab extends StatefulWidget {
   final List<Map<String,dynamic>> history;
@@ -68,122 +70,112 @@ class _HistoryTabState extends State<HistoryTab>{
     return '';
   }
 
-  // comment showModalBottomSheet
+  // comment modalBottomSheet
   void _showCommentSheet(int itemId) {
-    Navigator.pop(context);
     // find item comment and set commentController with this comment
     final item = widget.history.firstWhere((item) => item['id'] == itemId);
     String comment = item['comment'];
     widget.commentController.text = comment;
 
-    showModalBottomSheet(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+    showCustomBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
-      builder: (BuildContext context) {
-        return Padding(
-        padding: EdgeInsets.only(
-          top: 10,
-          bottom: MediaQuery.of(context).viewInsets.bottom
-        ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // top bar of comment modalBottomSheet
-                topBar(
-                  context: context, 
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // close button
-                      buildIconButton(
-                        context: context, 
-                        onTap: () { 
-                          Navigator.pop(context);
-                          widget.commentController.clear();
-                        },
-                        color: Theme.of(context).colorScheme.primary,
-                        icon: Icons.close
-                      ),
-                      const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      // done button
-                      buildIconButton(
-                        context: context, 
-                        onTap: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            addComment(widget.history, widget.commentController.text, itemId);
-                          });
-                          widget.commentController.clear();
-                        },
-                        color: Theme.of(context).colorScheme.primary,
-                        icon: Icons.check
-                      )
-                    ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // top bar of comment modalBottomSheet
+            topBar(
+              context: context, 
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // close button
+                  buildIconButton(
+                    context: context, 
+                    onTap: () { 
+                      Navigator.pop(context);
+                      widget.commentController.clear();
+                    },
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.close
                   ),
-                  bgColor: Colors.transparent
-                ),
-                // comment text field
-                TextField(
-                  controller: widget.commentController,
-                  minLines: 10,
-                  maxLines: 20,
-                  cursorColor: Theme.of(context).colorScheme.primary,
-                  decoration: InputDecoration(
-                    hintText: 'Enter comment',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(10),
-                    hoverColor: Colors.transparent
-                  ),
-                )
-              ],
+                  const Text('Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // done button
+                  buildIconButton(
+                    context: context, 
+                    onTap: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        addComment(widget.history, widget.commentController.text, itemId);
+                      });
+                      widget.commentController.clear();
+                    },
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.check
+                  )
+                ],
+              ),
+            ),
+            // comment text field
+            TextField(
+              controller: widget.commentController,
+              minLines: 10,
+              maxLines: 20,
+              cursorColor: Theme.of(context).colorScheme.primary,
+              decoration: InputDecoration(
+                hintText: 'Enter Comment',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(10),
+                hoverColor: Colors.transparent
+              ),
             )
-          ),
-        );
-      }
+          ],
+        ),
+      )
     );
   }
 
   // clear all history dialog
   void _showClearHistoryDialog() {
-    showDialog(
-      context: context, 
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        title: const Text('Clear history'),
-        content: Text('It will clear all your history in folder $_appTitle'),
-        actions:<Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.bodyMedium,
+    showAlertDialog(
+      context: context,
+      title:  'Clear History',
+      content: Text('It will clear all your history in folder $_appTitle'),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  padding: EdgeInsets.all(25)
+                ),
+                child: const Text('Cancel'),
+              ),
             ),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              setState(() {
-                clearHistory(
-                  history: widget.history,
-                  folderId: _currentFolderId,
-                );
-              });
-              Navigator.pop(context);
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red[700],
-              foregroundColor: Colors.white,
-              textStyle: Theme.of(context).textTheme.bodyMedium,
-            ),
-            child: const Text('OK'),
-          ),
-        ],
-      )
+            SizedBox(width: 10),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    clearHistory(
+                      history: widget.history,
+                      folderId: _currentFolderId,
+                    );
+                  });
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  padding: EdgeInsets.all(25)
+                ),
+                child: const Text('Clear', style: TextStyle(color: Colors.red)),
+              ),
+            )
+          ],
+        )
+      ],
     );
   }
 
@@ -197,67 +189,109 @@ class _HistoryTabState extends State<HistoryTab>{
 
   // show modalBottomSheet with all folders
   void _moveToFolderSheet(int itemIndex) {
-    showModalBottomSheet(
+    showCustomBottomSheet(
       context: context, 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: MediaQuery.of(context).viewInsets.bottom
-          ),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).disabledColor,
-                      width: 1.0,
-                    )
-                  )
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Move to folder', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.folder_outlined),
-                title: const Text('All History'),
-                onTap: () {
-                  Navigator.pop(context);
-                  changeItemFolderId(widget.history, itemIndex, 0);
-                },
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: widget.folders.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: const Icon(Icons.folder_outlined),
-                      title: Text(widget.folders[index]['folderName']),
-                      onTap: () {
-                        Navigator.pop(context);
-                        final int selectedFolderId = widget.folders[index]['id'];
-                        changeItemFolderId(widget.history, itemIndex, selectedFolderId);
-                      },
-                    );
-                  }
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).disabledColor,
+                  width: 1.0,
                 )
+              )
+            ),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(width: 24),
+                  const Text('Move To Folder', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(width: 24),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      }
+          ListTile(
+            leading: const Icon(Icons.folder_outlined),
+            title: const Text('All History'),
+            onTap: () {
+              Navigator.pop(context);
+              changeItemFolderId(widget.history, itemIndex, 0);
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.folders.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const Icon(Icons.folder_outlined),
+                  title: Text(widget.folders[index]['folderName']),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final int selectedFolderId = widget.folders[index]['id'];
+                    changeItemFolderId(widget.history, itemIndex, selectedFolderId);
+                  },
+                );
+              }
+            )
+          ),
+        ],
+      ),
+    );
+  }
+
+  // actions for item in history
+  void _showActionsSheet(int index) {
+    showCustomBottomSheet(
+      context: context, 
+      child: Wrap(
+        children: [
+          // first section
+          _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take Expression'), onTap: () {
+            Navigator.pop(context);
+            insertData(_filteredHistory[index]['expression'], 'expression');
+            widget.switchTab();
+          }),
+          _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take Result'), onTap: () {
+            Navigator.pop(context);
+            insertData(_filteredHistory[index]['expression'], 'result');
+            widget.switchTab();
+          }),
+          // second section
+          Divider(color: Theme.of(context).disabledColor),
+          _buildActionTile(leadingIcon: Icon(Icons.copy), title: Text('Copy Result'), onTap: () {
+            Navigator.pop(context);
+            String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
+            copyToClipboard(data);
+          }),
+          _buildActionTile(leadingIcon: Icon(Icons.copy_all), title: Text('Copy All'), onTap: () {
+            Navigator.pop(context);
+            String data = _filteredHistory[index]['expression'];
+            copyToClipboard(data);
+          }),
+          // third section
+          Divider(color: Theme.of(context).disabledColor),
+          _buildActionTile(leadingIcon: Icon(Icons.drive_file_move_outline), title: Text('Move To Folder'), onTap: () {
+            Navigator.pop(context);
+            _moveToFolderSheet(index);
+          }),
+          _buildActionTile(leadingIcon: Icon(Icons.comment_outlined), title: Text('Comment'), onTap: () {
+            Navigator.pop(context);
+            final int itemId = _filteredHistory[index]['id'];
+            _showCommentSheet(itemId);
+          }),
+          _buildActionTile(leadingIcon: Icon(Icons.delete_outline, color: Colors.red,), title: Text('Delete', style: TextStyle(color: Colors.red),), onTap: () {
+            Navigator.pop(context);
+            setState(() {
+              final int itemId = _filteredHistory[index]['id'];
+              deleteItem(widget.history, itemId, 'history');
+            });
+          }),   
+        ],
+      ),
     );
   }
 
@@ -331,14 +365,13 @@ class _HistoryTabState extends State<HistoryTab>{
                 )
               ],
             ),
-            bgColor: Theme.of(context).colorScheme.surface
           ),
           // history list
           Expanded(
             child: (() {
               _filterHistory();
               return _filteredHistory.isEmpty
-              ? const Center(child: Text('No history available', style: TextStyle(fontSize: 25)))
+              ? const Center(child: Text('No History Available', style: TextStyle(fontSize: 25)))
               : ListView.builder(
                 itemCount: _filteredHistory.length,
                 itemBuilder: (context, index) {
@@ -353,66 +386,7 @@ class _HistoryTabState extends State<HistoryTab>{
                           subtitle: _filteredHistory[index]['comment'].toString().trim().isEmpty
                           ? null
                           : Text(_filteredHistory[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
-                          onTap: () {
-                            // actions for a selected item in history
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Theme.of(context).colorScheme.secondary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                              ),
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: Wrap(
-                                    children: [
-                                      // first section
-                                      _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take expression'), onTap: () {
-                                        Navigator.pop(context);
-                                        insertData(_filteredHistory[index]['expression'], 'expression');
-                                        widget.switchTab();
-                                      }),
-                                      _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take result'), onTap: () {
-                                        Navigator.pop(context);
-                                        insertData(_filteredHistory[index]['expression'], 'result');
-                                        widget.switchTab();
-                                      }),
-                                      // second section
-                                      Divider(color: Theme.of(context).disabledColor),
-                                      _buildActionTile(leadingIcon: Icon(Icons.copy), title: Text('Copy result'), onTap: () {
-                                        Navigator.pop(context);
-                                        String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
-                                        copyToClipboard(data);
-                                      }),
-                                      _buildActionTile(leadingIcon: Icon(Icons.copy_all), title: Text('Copy all'), onTap: () {
-                                        Navigator.pop(context);
-                                        String data = _filteredHistory[index]['expression'];
-                                        copyToClipboard(data);
-                                      }),
-                                      // third section
-                                      Divider(color: Theme.of(context).disabledColor),
-                                      _buildActionTile(leadingIcon: Icon(Icons.drive_file_move_outline), title: Text('Move to folder'), onTap: () {
-                                        Navigator.pop(context);
-                                        _moveToFolderSheet(index);
-                                      }),
-                                      _buildActionTile(leadingIcon: Icon(Icons.comment_outlined), title: Text('Comment'), onTap: () {
-                                        final int itemId = _filteredHistory[index]['id'];
-                                        _showCommentSheet(itemId);
-                                      }),
-                                      _buildActionTile(leadingIcon: Icon(Icons.delete_outline, color: Colors.red,), title: Text('Delete', style: TextStyle(color: Colors.red),), onTap: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          final int itemId = _filteredHistory[index]['id'];
-                                          deleteItem(widget.history, itemId, 'history');
-                                        });
-                                      }),   
-                                    ],
-                                  ),
-                                );
-                              }
-                            );
-                          },
+                          onTap: () => _showActionsSheet(index),
                         ),
                       )
                     ]

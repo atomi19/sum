@@ -162,7 +162,6 @@ class _ConvertFromToPageState extends State<ConvertFromToPage> {
                   SizedBox(width: 48),
                 ],
               ),
-              bgColor: Theme.of(context).colorScheme.surface,
             ),
             // conversion units
             Expanded(              
