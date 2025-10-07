@@ -30,6 +30,9 @@ class _HistoryTabState extends State<HistoryTab>{
   late List<Map<String, dynamic>> _filteredHistory;
   int _currentFolderId = 0;
   String _appTitle = 'All History';
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> _searchHistory = [];
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -188,7 +191,10 @@ class _HistoryTabState extends State<HistoryTab>{
   }
 
   // show modalBottomSheet with all folders
-  void _moveToFolderSheet(int itemIndex) {
+  void _moveToFolderSheet({
+    required List<Map<String, dynamic>> history,
+    required int itemIndex
+    }) {
     showCustomBottomSheet(
       context: context, 
       child: Column(
@@ -219,7 +225,7 @@ class _HistoryTabState extends State<HistoryTab>{
             title: const Text('All History'),
             onTap: () {
               Navigator.pop(context);
-              changeItemFolderId(widget.history, itemIndex, 0);
+              changeItemFolderId(history, itemIndex, 0);
             },
           ),
           Expanded(
@@ -232,7 +238,7 @@ class _HistoryTabState extends State<HistoryTab>{
                   onTap: () {
                     Navigator.pop(context);
                     final int selectedFolderId = widget.folders[index]['id'];
-                    changeItemFolderId(widget.history, itemIndex, selectedFolderId);
+                    changeItemFolderId(history, itemIndex, selectedFolderId);
                   },
                 );
               }
@@ -244,7 +250,10 @@ class _HistoryTabState extends State<HistoryTab>{
   }
 
   // actions for item in history
-  void _showActionsSheet(int index) {
+  void _showActionsSheet({
+    required List<Map<String, dynamic>> history,
+    required int index
+    }) {
     showCustomBottomSheet(
       context: context, 
       child: Wrap(
@@ -252,42 +261,53 @@ class _HistoryTabState extends State<HistoryTab>{
           // first section
           _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take Expression'), onTap: () {
             Navigator.pop(context);
-            insertData(_filteredHistory[index]['expression'], 'expression');
+            insertData(history[index]['expression'], 'expression');
             widget.switchTab();
           }),
           _buildActionTile(leadingIcon: Icon(Icons.download), title: Text('Take Result'), onTap: () {
             Navigator.pop(context);
-            insertData(_filteredHistory[index]['expression'], 'result');
+            insertData(history[index]['expression'], 'result');
             widget.switchTab();
           }),
           // second section
           Divider(color: Theme.of(context).disabledColor),
           _buildActionTile(leadingIcon: Icon(Icons.copy), title: Text('Copy Result'), onTap: () {
             Navigator.pop(context);
-            String data = splitExpressionAndResult(_filteredHistory[index]['expression'], 'result');
+            String data = splitExpressionAndResult(history[index]['expression'], 'result');
             copyToClipboard(data);
           }),
           _buildActionTile(leadingIcon: Icon(Icons.copy_all), title: Text('Copy All'), onTap: () {
             Navigator.pop(context);
-            String data = _filteredHistory[index]['expression'];
+            String data = history[index]['expression'];
             copyToClipboard(data);
           }),
           // third section
           Divider(color: Theme.of(context).disabledColor),
           _buildActionTile(leadingIcon: Icon(Icons.drive_file_move_outline), title: Text('Move To Folder'), onTap: () {
             Navigator.pop(context);
-            _moveToFolderSheet(index);
+            _moveToFolderSheet(
+              history: history, 
+              itemIndex: index
+            );
           }),
           _buildActionTile(leadingIcon: Icon(Icons.comment_outlined), title: Text('Comment'), onTap: () {
             Navigator.pop(context);
-            final int itemId = _filteredHistory[index]['id'];
+            final int itemId = history[index]['id'];
             _showCommentSheet(itemId);
           }),
           _buildActionTile(leadingIcon: Icon(Icons.delete_outline, color: Colors.red,), title: Text('Delete', style: TextStyle(color: Colors.red),), onTap: () {
             Navigator.pop(context);
+            final int itemId = history[index]['id'];
             setState(() {
-              final int itemId = _filteredHistory[index]['id'];
+              // delete item in history
               deleteItem(widget.history, itemId, 'history');
+              // update history
+              _filterHistory();
+              // if user is searching for anything
+              // then update searchHistory (so if we removed any item, update it)
+              _searchHistory = _isSearching
+                ? searchExpression(history: _filteredHistory, query: _searchController.text)
+                : [];
             });
           }),   
         ],
@@ -337,65 +357,124 @@ class _HistoryTabState extends State<HistoryTab>{
     );
   }
 
+  // build history items
+  Widget _buildHistory({
+    required List<Map<String, dynamic>> history,
+  }) {
+    return ListView.builder(
+      padding: EdgeInsets.only(bottom: 70),
+      itemCount: history.length,
+      itemBuilder: (context, index) {
+        return Container( 
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).disabledColor,
+                width: 1,
+              )
+            )
+          ),         
+          child: ListTile(
+            title: Text(history[index]['expression'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20)),
+            subtitle: history[index]['comment'].toString().trim().isEmpty
+            ? null
+            : Text(history[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
+            onTap: () => _showActionsSheet(
+              history: history,
+              index: index
+            ),
+          )
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          // top bar
-          topBar(
-            context: context, 
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // back button
-                buildIconButton(
-                  context: context, 
-                  onTap: _navigateToFoldersPage, 
-                  color: Theme.of(context).colorScheme.primary,
-                  icon: Icons.arrow_back
-                ),
-                Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
-                // clear history button
-                buildIconButton(
-                  context: context, 
-                  onTap: _showClearHistoryDialog,
-                  color: Colors.red,
-                  icon: Icons.delete_outline
-                )
-              ],
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            // top bar
+            topBar(
+              context: context, 
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // back button
+                  buildIconButton(
+                    context: context, 
+                    onTap: () {
+                      _searchController.clear();
+                      _isSearching = false;
+                      _navigateToFoldersPage();
+                    }, 
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.arrow_back
+                  ),
+                  Text(_appTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+                  // clear history button
+                  buildIconButton(
+                    context: context, 
+                    onTap: _showClearHistoryDialog,
+                    color: Colors.red,
+                    icon: Icons.delete_outline
+                  )
+                ],
+              ),
             ),
-          ),
-          // history list
-          Expanded(
-            child: (() {
-              _filterHistory();
-              return _filteredHistory.isEmpty
-              ? const Center(child: Text('No History Available', style: TextStyle(fontSize: 25)))
-              : ListView.builder(
-                itemCount: _filteredHistory.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1))
+            // history list and search field
+            Expanded(
+              child: Stack(
+                children: [
+                  // search history
+                  _isSearching
+                  ?  (() {
+                    return _searchHistory.isEmpty
+                    ? Center(child: Text('No results found', style: TextStyle(fontSize: 25, color: Theme.of(context).disabledColor)))
+                    : _buildHistory(history: _searchHistory);
+                  })()
+                  // all history (or folder specific history)
+                  : (() {
+                    _filterHistory();
+                    return _filteredHistory.isEmpty
+                    ? Center(child: Text('No history available', style: TextStyle(fontSize: 25, color: Theme.of(context).disabledColor)))
+                    : _buildHistory(history: _filteredHistory);
+                  })(),
+                  // search field
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.search),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 12),
+                          hintText: 'Search expressions or comments',
+                          hintStyle: TextStyle(
+                            color: Theme.of(context).disabledColor
+                          ),
                         ),
-                        child: ListTile(
-                          title: Text(_filteredHistory[index]['expression'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20)),
-                          subtitle: _filteredHistory[index]['comment'].toString().trim().isEmpty
-                          ? null
-                          : Text(_filteredHistory[index]['comment'], style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13)),
-                          onTap: () => _showActionsSheet(index),
-                        ),
-                      )
-                    ]
-                  );
-                }
-              );
-            })()
-          ),
-        ],
+                        onChanged: (String query) {
+                          setState(() {
+                            _isSearching = true;
+                            _searchHistory = searchExpression(history: _filteredHistory, query: query);
+                          });
+                        },
+                      ),
+                    )
+                  )
+                ],
+              )
+            ),
+          ],
+        ),
       )
     );
   }

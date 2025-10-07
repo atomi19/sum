@@ -31,7 +31,7 @@ ThemeData lightTheme = ThemeData(
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.white,
+    fillColor: Colors.transparent,
   ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: Colors.blue.shade200,

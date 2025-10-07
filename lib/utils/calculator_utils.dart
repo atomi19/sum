@@ -196,3 +196,14 @@ String removeCharacter(TextEditingController controller) {
 void copyToClipboard(String data) async {
   await Clipboard.setData(ClipboardData(text: data));
 }
+
+List<Map<String, dynamic>> searchExpression({
+  required List<Map<String, dynamic>> history,
+  required String query,
+}) {
+  final results = history.where((el) => 
+  el['expression'].toString().toLowerCase().contains(query.toLowerCase()) || 
+  el['comment'].toString().toLowerCase().contains(query.toLowerCase())
+  ).toList();
+  return results;
+}
