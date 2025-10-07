@@ -454,6 +454,17 @@ class _HistoryTabState extends State<HistoryTab>{
                         controller: _searchController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _isSearching 
+                          ? GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _searchController.clear();
+                                _isSearching = false;
+                              });
+                            },
+                            child: Icon(Icons.close),
+                          )
+                          : null,
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(vertical: 12),
                           hintText: 'Search expressions or comments',
@@ -463,8 +474,12 @@ class _HistoryTabState extends State<HistoryTab>{
                         ),
                         onChanged: (String query) {
                           setState(() {
-                            _isSearching = true;
-                            _searchHistory = searchExpression(history: _filteredHistory, query: query);
+                            if(query.trim().isEmpty) {
+                              _isSearching = false;
+                            } else {
+                              _isSearching = true;
+                              _searchHistory = searchExpression(history: _filteredHistory, query: query);
+                            }
                           });
                         },
                       ),
