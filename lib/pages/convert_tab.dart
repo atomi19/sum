@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sum/pages/convert_from_to_page.dart';
+import 'package:sum/pages/date_and_time.dart';
 
 class ConvertTab extends StatefulWidget {
   const ConvertTab({super.key});
@@ -13,6 +14,13 @@ class _ConvertTabState extends State<ConvertTab> {
     Navigator.push(
       context, 
       MaterialPageRoute(builder: (context) => ConvertFromToPage(conversionType: conversionType,))
+    );
+  }
+
+  void _navigateToDaysBetweenDates() {
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => DateAndTime())
     );
   }
 
@@ -60,6 +68,7 @@ class _ConvertTabState extends State<ConvertTab> {
               padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
               children: [
                 _createUnitSection(context, Icons.storage_outlined, 'Data', () => _navigateToConvertFromToPage('Data')),
+                _createUnitSection(context, Icons.date_range, 'Date & Time', () => _navigateToDaysBetweenDates()),
                 _createUnitSection(context, Icons.straighten_outlined, 'Length', () => _navigateToConvertFromToPage('Length')),
                 _createUnitSection(context, Icons.bolt_outlined, 'Power', () => _navigateToConvertFromToPage('Power')),
                 _createUnitSection(context, Icons.thermostat_outlined, 'Temperature', () => _navigateToConvertFromToPage('Temperature')),
